@@ -99,20 +99,22 @@ textarea {
 
 .brand-orbit {
   display: grid;
-  width: 28px;
+  width: 32px;
   aspect-ratio: 1;
   place-items: center;
-  color: #ffffff;
-  background:
-    radial-gradient(circle at 62% 36%, #fff 0 20%, transparent 21%),
-    linear-gradient(145deg, var(--cyan), var(--purple));
-  border-radius: 999px;
-  box-shadow: 0 0 0 4px rgba(6, 182, 212, 0.12);
+  overflow: hidden;
+  background: #ffffff;
+  border: 1px solid rgba(6, 182, 212, 0.16);
+  border-radius: 10px;
+  box-shadow:
+    0 0 0 4px rgba(6, 182, 212, 0.1),
+    0 10px 22px rgba(124, 58, 237, 0.12);
 }
 
-.brand-orbit svg {
-  width: 16px;
-  height: 16px;
+.brand-orbit img {
+  width: 25px;
+  height: 25px;
+  object-fit: contain;
 }
 
 .sidebar-collapse {
