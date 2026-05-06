@@ -14,6 +14,12 @@ Atualmente, o projeto conta com uma API REST funcional e uma interface inicial p
 
 ---
 
+## Preview
+
+![Trackio dashboard completo com dados mockados](docs/images/trackio-dashboard-complete.png)
+
+---
+
 ## Funcionalidades
 
 - Criação de tarefas

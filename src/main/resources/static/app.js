@@ -192,7 +192,16 @@ function renderRows(tasks) {
   if (tasks.length === 0) {
     return `
       <tr>
-        <td colspan="9" class="project-name">No tasks in this group.</td>
+        <td colspan="9" class="group-empty">
+          <div class="group-empty-content">
+            <i data-lucide="clipboard-list"></i>
+            <span>No tasks in this group</span>
+            <button class="ghost-button" type="button" data-empty-add>
+              <i data-lucide="plus"></i>
+              Create New Task
+            </button>
+          </div>
+        </td>
       </tr>
     `;
   }
@@ -324,6 +333,10 @@ function bindDynamicActions() {
 
   document.querySelectorAll("[data-delete]").forEach((button) => {
     button.addEventListener("click", () => deleteTask(Number(button.dataset.delete)));
+  });
+
+  el.listView.querySelectorAll("[data-empty-add]").forEach((button) => {
+    button.addEventListener("click", () => openDialog());
   });
 }
 
