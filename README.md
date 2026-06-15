@@ -1,62 +1,132 @@
 # Trackio - TaskManagerAPI
 
-Trackio e uma API REST para gerenciamento de tarefas, desenvolvida com Java, Spring Boot, Spring Data JPA e H2 Database. O projeto sera adaptado incrementalmente para uma entrega academica com demonstracao pratica de Clean Code, SOLID, Design Patterns, TDD, BDD, Arquitetura Limpa, Microsservicos, Docker/Docker Compose e Deploy.
+Trackio e um sistema em evolucao para gestao empresarial de demandas, tarefas, responsaveis, prazos e produtividade. O repositorio atual contem uma API REST em Java/Spring Boot, uma interface web estatica para o modulo de tarefas e documentacao academica para demonstrar Clean Code, SOLID, Design Patterns, TDD, BDD, Arquitetura Limpa, Docker, microsservicos planejados e deploy.
 
 ## Problema escolhido
 
-Equipes pequenas frequentemente precisam organizar atividades, responsaveis, prioridades, status, prazos e progresso sem depender de ferramentas complexas demais para o seu contexto. O problema escolhido e a falta de uma plataforma simples, objetiva e evolutiva para acompanhar tarefas de um time pequeno.
+Muitas empresas ainda controlam demandas por planilhas, WhatsApp, e-mails soltos, anotacoes manuais ou quadros Trello sem padronizacao. Isso dificulta a visao de responsaveis, prazos, prioridades, status e produtividade.
 
-## Proposta da solucao
+O Trackio busca resolver esse problema com uma plataforma interna simples, visual e profissional para organizar o trabalho da empresa.
 
-A proposta e evoluir o Trackio como uma plataforma de gerenciamento de tarefas para equipes pequenas. No estado atual, o sistema permite cadastrar, listar, atualizar, filtrar e remover tarefas. Nas proximas fases, o projeto sera preparado como estudo academico, com documentacao, testes, arquitetura mais clara, containerizacao e deploy demonstravel.
+## Solucao proposta
 
-## Escopo atual do sistema
+A solucao proposta e um sistema empresarial de gestao de demandas. No estado atual, o foco implementado e o modulo de tarefas. A evolucao planejada inclui organizacoes, usuarios, funcionarios, equipes, projetos, Kanban, dashboard, comentarios, anexos e historico.
 
-O sistema atualmente contempla tarefas com:
+Do ponto de vista comercial, o Trackio e pensado como software de valor fechado/licenca de uso, nao como SaaS mensal obrigatorio. A empresa pode pagar uma vez pelo escopo contratado e usar o sistema por tempo indeterminado. Suporte continuo, hospedagem, manutencao e novas funcionalidades podem ser cobrados separadamente.
 
-- Titulo.
-- Descricao.
-- Responsavel.
-- Projeto.
-- Progresso.
-- Status.
-- Prioridade.
-- Data limite.
+## Estado atual do projeto
 
-Endpoints principais:
+O projeto hoje possui:
 
-| Metodo | Rota | Descricao |
-|---|---|---|
-| POST | `/api/tasks` | Cria uma nova tarefa |
-| GET | `/api/tasks?page=0&size=10` | Lista tarefas com paginacao |
-| GET | `/api/tasks/{id}` | Busca uma tarefa pelo ID |
-| PUT | `/api/tasks/{id}` | Atualiza uma tarefa |
-| DELETE | `/api/tasks/{id}` | Remove uma tarefa |
-| GET | `/api/tasks/filter?status=PENDENTE&priority=ALTA` | Filtra tarefas por status e prioridade |
+- API REST para tarefas.
+- Frontend estatico servido pelo Spring Boot em `/`.
+- Listagem real de tarefas via `/api/tasks`.
+- Criacao, edicao e exclusao de tarefas pela interface.
+- Sidebar com modulos ativos e secao de roadmap.
+- Documentacao academica em `docs/`.
+- Testes unitarios, teste de repository e cenarios BDD.
+- Dockerfile e docker-compose.yml para execucao da API em container.
 
-## Tecnologias utilizadas
+O projeto ainda nao possui:
 
-- Java 17 configurado no `pom.xml`.
+- login/autenticacao;
+- usuarios e funcionarios reais;
+- organizacoes/empresas;
+- equipes/departamentos;
+- projetos como modulo proprio;
+- Kanban funcional;
+- dashboard funcional;
+- comentarios, anexos e historico;
+- microsservicos executaveis separados;
+- deploy publicado em servidor/cloud.
+
+## Funcionalidades implementadas
+
+Modulo Tasks:
+
+- criar tarefa;
+- listar tarefas paginadas;
+- buscar tarefa por id;
+- atualizar tarefa;
+- excluir tarefa;
+- filtrar tarefas por status e prioridade;
+- campos: titulo, descricao, responsavel, projeto, progresso, status, prioridade e prazo;
+- tratamento global de erros;
+- validacao de payloads;
+- documentacao OpenAPI/Swagger.
+
+Frontend atual:
+
+- tela principal de tarefas;
+- cards de resumo;
+- busca local;
+- filtro por status;
+- tabela de tarefas reais;
+- estados de loading, erro, vazio e sucesso;
+- roadmap visual para modulos futuros, sem simular funcionalidades inexistentes.
+
+## Funcionalidades planejadas
+
+- autenticacao e autorizacao;
+- organizacao/empresa;
+- funcionarios/membros;
+- equipes/departamentos;
+- projetos;
+- Kanban;
+- dashboard;
+- comentarios;
+- anexos;
+- historico de atividades;
+- notificacoes;
+- relatorios;
+- deploy em cloud;
+- evolucao para microsservicos quando fizer sentido.
+
+## Arquitetura atual
+
+A estrutura principal segue uma organizacao inspirada em Arquitetura Limpa:
+
+```text
+src/main/java/com/taskmanager/api
+  domain
+  application
+  infrastructure
+  presentation
+```
+
+- `domain`: modelo de dominio, enums e excecoes.
+- `application`: comandos, portas, factory, use cases e facade de aplicacao.
+- `infrastructure`: configuracoes, persistencia JPA, adapter e mapper.
+- `presentation`: controllers, DTOs e tratamento de excecoes HTTP.
+
+Ainda existem pontos em evolucao, como uso de anotacoes Spring em classes de application e uso de `Page`/`Pageable` na porta de repository.
+
+## Tecnologias
+
+- Java 17.
 - Spring Boot 3.3.5.
 - Spring Web.
-- Spring Data JPA / Hibernate.
+- Spring Data JPA.
 - H2 Database.
+- PostgreSQL para execucao via Docker/profile de producao.
 - Jakarta Bean Validation.
-- springdoc-openapi / Swagger UI.
-- Maven e Maven Wrapper.
+- Swagger/OpenAPI via springdoc.
+- Maven Wrapper.
 - JUnit 5, AssertJ e Mockito.
+- Cucumber BDD.
+- Docker e Docker Compose.
 - HTML, CSS e JavaScript estatico.
 
-## Como rodar o projeto atualmente
+## Como rodar localmente com H2
 
 Pre-requisitos:
 
 - Java 17 ou superior.
-- Maven ou Maven Wrapper.
+- Maven Wrapper incluido no repositorio.
 
-No Windows:
+O profile padrao e `dev`, usando H2 em memoria:
 
-```bash
+```powershell
 .\mvnw.cmd spring-boot:run
 ```
 
@@ -66,68 +136,123 @@ A aplicacao fica disponivel em:
 http://localhost:8080
 ```
 
-Swagger UI:
-
-```text
-http://localhost:8080/swagger-ui.html
-```
-
-H2 Console no perfil padrao de desenvolvimento:
+H2 Console:
 
 ```text
 http://localhost:8080/h2-console
 ```
 
-## Como executar os testes
+## Como rodar com Docker
 
-```bash
+Pre-requisitos:
+
+- Docker Desktop ou Docker Engine ativo.
+
+O Docker Compose sobe a API com o profile `docker` e um PostgreSQL persistente:
+
+```powershell
+docker compose down
+docker compose build
+docker compose up -d
+```
+
+A API fica acessivel em:
+
+```text
+http://localhost:8081
+```
+
+O PostgreSQL fica disponivel no host em:
+
+```text
+localhost:5432
+database: trackio
+user: trackio
+password: trackio
+```
+
+O volume `taskmanager-postgres-data` preserva os dados entre reinicios dos containers. Para remover tambem os dados persistidos:
+
+```powershell
+docker compose down -v
+```
+
+## Endpoints principais
+
+| Metodo | Rota | Descricao |
+|---|---|---|
+| `GET` | `/` | Interface web estatica |
+| `GET` | `/api/tasks?page=0&size=10` | Lista tarefas com paginacao |
+| `GET` | `/api/tasks/{id}` | Busca uma tarefa por id |
+| `POST` | `/api/tasks` | Cria uma tarefa |
+| `PUT` | `/api/tasks/{id}` | Atualiza uma tarefa |
+| `DELETE` | `/api/tasks/{id}` | Remove uma tarefa |
+| `GET` | `/api/tasks/filter?status=PENDENTE&priority=ALTA` | Filtra tarefas |
+
+## Swagger/OpenAPI
+
+Quando a aplicacao esta rodando:
+
+```text
+http://localhost:8080/swagger-ui.html
+```
+
+No Docker Compose:
+
+```text
+http://localhost:8081/swagger-ui.html
+```
+
+## Testes
+
+Executar:
+
+```powershell
 .\mvnw.cmd test
 ```
 
-Na auditoria da Fase 0 e na documentacao da Fase 1, os testes existentes foram executados com sucesso.
+Estado real:
 
-## Status atual da adequacao ao enunciado
+- testes unitarios: existentes;
+- testes de use cases: existentes;
+- testes de service/facade: existentes;
+- testes de dominio: existentes;
+- teste de repository JPA: existente;
+- BDD com Cucumber: existente;
+- testes de controller/API HTTP: ainda pendentes;
+- testes automatizados do frontend: ainda pendentes.
 
-| Criterio | Estado atual | Adaptacao planejada |
-|---|---|---|
-| Clean Code | Ha nomes claros, DTOs, validacoes e tratamento global de excecoes. | Reduzir responsabilidades, duplicacoes e melhorar organizacao interna. |
-| SOLID | Ha separacao inicial entre controller, service e repository. | Introduzir contratos e reduzir acoplamento com framework e persistencia. |
-| Design Patterns | Ja aparecem Repository, DTO, Dependency Injection e Exception Handler. | Demonstrar patterns de forma intencional, como Use Case, Mapper, Ports/Adapters e Specification quando aplicavel. |
-| TDD | Existem testes unitarios e de repository. | Ampliar testes antes de refatorar comportamento. |
-| BDD | Ainda nao implementado. | Criar cenarios Gherkin/Cucumber para fluxos principais. |
-| Arquitetura Limpa | Ainda nao implementada formalmente. | Separar dominio, aplicacao, infraestrutura e interfaces de entrada. |
-| Microsservicos | Ainda nao implementado. | Avaliar extracao apenas apos estabilizar arquitetura, testes e Docker. |
-| Docker/Docker Compose | Ainda nao implementado. | Criar Dockerfile e compose em fase propria. |
-| Deploy | Ainda nao implementado. | Definir alvo de servidor/cloud e publicar versao demonstravel. |
+## Status academico
 
-## Evidencias existentes
+| Criterio | Status atual |
+|---|---|
+| Clean Code | Parcialmente atendido, com boa separacao de responsabilidades e nomes claros |
+| SOLID | Parcialmente atendido, com use cases e porta de repository |
+| Design Patterns | Atendido com Repository, Adapter, Mapper, Factory, Facade/Service, DTO, DI e Exception Handler |
+| TDD | Parcialmente atendido por testes unitarios existentes |
+| BDD | Atendido no fluxo basico de tarefas com Cucumber |
+| Arquitetura Limpa | Parcialmente atendida pela estrutura em camadas |
+| Microsservicos | Documentado como proposta futura; nao ha servicos separados executaveis |
+| Docker | Atendido com Dockerfile, Compose, PostgreSQL e volume persistente |
+| Deploy | Pendente |
+| Justificativas tecnicas | Documentadas em `docs/` |
 
-- API REST funcional para tarefas.
-- Persistencia local com H2.
-- Swagger/OpenAPI configurado.
-- Testes automatizados em `src/test`.
-- Relatorio de auditoria tecnica em `docs/auditoria-fase-0.md`.
-- Documentacao academica inicial em `docs/proposta-academica.md` e `docs/roadmap-academico.md`.
+## Documentacao principal
 
-## Roadmap resumido
-
-1. Fase 0: auditoria tecnica do estado atual. Concluida.
-2. Fase 1: documentacao academica base. Em andamento nesta entrega.
-3. Fase 2: baseline de qualidade com testes de controller/API.
-4. Fase 3: limpeza incremental de aplicacao e mapeamentos.
-5. Fase 4: preparacao para Arquitetura Limpa.
-6. Fase 5: BDD com cenarios executaveis.
-7. Fase 6: migracoes de banco e perfil de persistencia mais realista.
-8. Fase 7: Docker e Docker Compose.
-9. Fase 8: CI/CD.
-10. Fase 9: Deploy.
-11. Fase 10: avaliacao de microsservicos, se necessario para o enunciado.
-
-## Documentacao complementar
-
-- [Auditoria tecnica - Fase 0](docs/auditoria-fase-0.md)
-- [Proposta academica](docs/proposta-academica.md)
-- [Roadmap academico](docs/roadmap-academico.md)
+- [Proposta](docs/proposta.md)
+- [Requisitos](docs/requisitos.md)
+- [Arquitetura](docs/arquitetura.md)
+- [Clean Code](docs/clean-code.md)
+- [SOLID](docs/solid.md)
+- [Design Patterns](docs/design-patterns.md)
+- [TDD](docs/tdd.md)
+- [BDD](docs/bdd.md)
+- [Microsservicos](docs/microsservicos.md)
+- [Docker](docs/docker.md)
+- [Deploy](docs/deploy.md)
+- [Justificativas tecnicas](docs/justificativas-tecnicas.md)
+- [Roadmap](docs/roadmap.md)
+- [Checklist da entrega](docs/checklist-entrega.md)
 
 ## Licenca
 
