@@ -1,0 +1,11 @@
+services:
+  taskmanager-api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: taskmanager-api
+    environment:
+      SPRING_PROFILES_ACTIVE: dev
+    ports:
+      - "8081:8080"
+    restart: unless-stopped

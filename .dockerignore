@@ -1,0 +1,13 @@
+.git
+.github
+.vscode
+target
+data
+*.log
+*.tmp
+CLAUDE.md
+CODEX.md
+HELP.md
+SKILL.md
+docs
+assets

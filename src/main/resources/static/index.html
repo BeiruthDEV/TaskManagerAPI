@@ -20,136 +20,170 @@
           <span>Trackio</span>
         </a>
 
-        <button class="sidebar-collapse" type="button" aria-label="Recolher menu">
-          <i data-lucide="chevrons-left"></i>
-        </button>
-
-        <p class="menu-title">Main Menu</p>
+        <p class="menu-title">Core</p>
         <nav class="side-nav" aria-label="Menu principal">
-          <a href="#" class="side-link"><i data-lucide="layout-dashboard"></i>Dashboard</a>
-          <a href="#" class="side-link"><i data-lucide="box"></i>Projects</a>
-          <a href="#" class="side-link"><i data-lucide="calendar-days"></i>Calendar<i class="trail" data-lucide="chevron-down"></i></a>
-          <div class="side-group open">
-            <button class="side-link active" type="button"><i data-lucide="clipboard-list"></i>Tasks<i class="trail" data-lucide="chevron-up"></i></button>
-            <div class="side-subnav">
-              <button type="button" data-quick-status="PENDENTE"><i data-lucide="corner-down-right"></i>To Do</button>
-              <button type="button" data-quick-status="EM_PROGRESSO"><i data-lucide="corner-down-right"></i>In Progress</button>
-              <button type="button" data-quick-status="EM_REVISAO"><i data-lucide="corner-down-right"></i>In Review</button>
-              <button type="button" data-quick-status="CONCLUIDO"><i data-lucide="corner-down-right"></i>Completed</button>
-            </div>
-          </div>
-          <a href="#" class="side-link"><i data-lucide="chart-no-axes-column"></i>Performance</a>
-          <a href="#" class="side-link"><i data-lucide="wallet-cards"></i>Payrolls</a>
-          <a href="#" class="side-link"><i data-lucide="headphones"></i>Help &amp; Center</a>
+          <button class="side-link disabled" type="button" disabled>
+            <i data-lucide="layout-dashboard"></i>
+            <span class="side-link-label">Dashboard</span>
+          </button>
+          <a href="/" class="side-link active" data-main-view="tasks">
+            <i data-lucide="clipboard-list"></i>
+            <span class="side-link-label">Tasks</span>
+          </a>
+          <button class="side-link disabled" type="button" disabled>
+            <i data-lucide="folder"></i>
+            <span class="side-link-label">Projects</span>
+          </button>
+          <button class="side-link disabled" type="button" disabled>
+            <i data-lucide="settings"></i>
+            <span class="side-link-label">Settings</span>
+          </button>
         </nav>
 
-        <p class="menu-title second">Team Management</p>
-        <nav class="side-nav" aria-label="Gerenciamento do time">
-          <a href="#" class="side-link"><i data-lucide="users"></i>Employees<i class="trail" data-lucide="chevron-down"></i></a>
-          <a href="#" class="side-link"><i data-lucide="receipt-text"></i>Invoices</a>
-          <a href="#" class="side-link"><i data-lucide="sparkles"></i>Recruitment &amp; Hiring</a>
-          <a href="#" class="side-link"><i data-lucide="git-branch"></i>Integration</a>
+        <p class="menu-title second">Roadmap</p>
+        <nav class="side-nav roadmap-nav" aria-label="Modulos planejados">
+          <button class="side-link roadmap-link" type="button" data-roadmap-module="calendar">
+            <i data-lucide="calendar-days"></i>
+            <span class="side-link-label">Calendar</span>
+            <span class="roadmap-badge">Em breve</span>
+          </button>
+          <button class="side-link roadmap-link" type="button" data-roadmap-module="performance">
+            <i data-lucide="activity"></i>
+            <span class="side-link-label">Performance</span>
+            <span class="roadmap-badge">Em breve</span>
+          </button>
+          <button class="side-link roadmap-link" type="button" data-roadmap-module="employees">
+            <i data-lucide="users"></i>
+            <span class="side-link-label">Employees</span>
+            <span class="roadmap-badge">Em breve</span>
+          </button>
+          <button class="side-link roadmap-link" type="button" data-roadmap-module="invoices">
+            <i data-lucide="receipt-text"></i>
+            <span class="side-link-label">Invoices</span>
+            <span class="roadmap-badge">Em breve</span>
+          </button>
+          <button class="side-link roadmap-link" type="button" data-roadmap-module="payrolls">
+            <i data-lucide="wallet-cards"></i>
+            <span class="side-link-label">Payrolls</span>
+            <span class="roadmap-badge">Em breve</span>
+          </button>
+          <button class="side-link roadmap-link" type="button" data-roadmap-module="recruitment">
+            <i data-lucide="user-plus"></i>
+            <span class="side-link-label">Recruitment &amp; Hiring</span>
+            <span class="roadmap-badge">Em breve</span>
+          </button>
+          <button class="side-link roadmap-link" type="button" data-roadmap-module="integration">
+            <i data-lucide="plug-zap"></i>
+            <span class="side-link-label">Integration</span>
+            <span class="roadmap-badge">Em breve</span>
+          </button>
+          <button class="side-link roadmap-link" type="button" data-roadmap-module="help">
+            <i data-lucide="circle-help"></i>
+            <span class="side-link-label">Help &amp; Center</span>
+            <span class="roadmap-badge">Em breve</span>
+          </button>
         </nav>
-
-        <section class="announcement" aria-label="Anuncio">
-          <div class="megaphone"><i data-lucide="megaphone"></i></div>
-          <strong>Announcement!</strong>
-          <span>Meeting starts in 5 minutes</span>
-          <div class="members">
-            <span class="avatar">MB</span>
-            <span class="avatar coral">LA</span>
-            <span class="avatar blue">JR</span>
-            <span class="avatar count">+2</span>
-          </div>
-          <button type="button">Join Now</button>
-        </section>
       </aside>
 
       <main class="app-main">
-        <header class="topbar">
+        <header class="topbar compact">
           <div class="page-title">
-            <h1>Tasks</h1>
-            <p>Track and organize all your team's projects in one place</p>
+            <h1 id="page-heading">Tasks</h1>
+            <p id="page-subtitle">Gerencie as tarefas do time</p>
           </div>
-
-          <label class="global-search">
-            <i data-lucide="search"></i>
-            <input id="global-search" type="search" placeholder="Search...">
-            <kbd>⌘ K</kbd>
-          </label>
-
-          <div class="top-actions" aria-label="Acoes do topo">
-            <button type="button" title="Information"><i data-lucide="info"></i></button>
-            <button type="button" title="Settings"><i data-lucide="settings"></i></button>
-            <button type="button" title="Messages"><i data-lucide="mail"></i></button>
-            <button type="button" title="Notifications"><i data-lucide="bell"></i></button>
-          </div>
-
-          <button class="profile-button" type="button">
-            <span class="avatar photo">PG</span>
-            <strong>Peter Gabrielle</strong>
-            <i data-lucide="chevron-down"></i>
-          </button>
         </header>
 
-        <section class="content-panel">
+        <section class="content-panel" id="tasks-panel">
+          <div class="summary-grid" aria-label="Resumo das tarefas">
+            <article class="summary-card">
+              <span>Total</span>
+              <strong id="summary-total">0</strong>
+            </article>
+            <article class="summary-card">
+              <span>Pendentes</span>
+              <strong id="summary-pending">0</strong>
+            </article>
+            <article class="summary-card">
+              <span>Em andamento</span>
+              <strong id="summary-progress">0</strong>
+            </article>
+            <article class="summary-card">
+              <span>Concluidas</span>
+              <strong id="summary-completed">0</strong>
+            </article>
+          </div>
+
           <div class="task-toolbar">
             <label class="task-search">
               <i data-lucide="search"></i>
-              <input id="task-search" type="search" placeholder="Search Task...">
+              <input id="task-search" type="search" placeholder="Buscar tarefa">
             </label>
 
-            <button class="filter-button" id="filter-button" type="button">
-              <i data-lucide="sliders-horizontal"></i>
-              Filter
-            </button>
+            <label class="status-select">
+              <span>Status</span>
+              <select id="status-filter">
+                <option value="">Todos</option>
+                <option value="PENDENTE">Pendentes</option>
+                <option value="EM_PROGRESSO">Em andamento</option>
+                <option value="EM_REVISAO">Em revisao</option>
+                <option value="CONCLUIDO">Concluidas</option>
+              </select>
+            </label>
 
             <div class="spacer"></div>
 
-            <div class="view-switch" aria-label="Visualizacao">
-              <button class="active" type="button" data-view="list"><i data-lucide="list-filter"></i>List</button>
-              <button type="button" data-view="kanban"><i data-lucide="kanban"></i>Kanban</button>
-              <button type="button" data-view="calendar"><i data-lucide="calendar"></i>Calendar</button>
-            </div>
-
             <button class="add-button" id="add-task-button" type="button">
               <i data-lucide="plus"></i>
-              Add Task
+              Nova tarefa
             </button>
           </div>
 
-          <div class="filter-popover" id="filter-popover" hidden>
-            <label>
-              <span>Status</span>
-              <select id="status-filter">
-                <option value="">All status</option>
-                <option value="PENDENTE">To Do</option>
-                <option value="EM_PROGRESSO">In Progress</option>
-                <option value="EM_REVISAO">In Review</option>
-                <option value="CONCLUIDO">Completed</option>
-              </select>
-            </label>
-            <label>
-              <span>Priority</span>
-              <select id="priority-filter">
-                <option value="">All priorities</option>
-                <option value="BAIXA">Low</option>
-                <option value="MEDIA">Medium</option>
-                <option value="ALTA">High</option>
-              </select>
-            </label>
-            <button type="button" id="clear-filters">Clear</button>
+          <div class="state-message" id="loading-state">
+            <i data-lucide="loader-circle"></i>
+            <span>Carregando tarefas...</span>
           </div>
 
-          <div id="list-view" class="list-view"></div>
-          <div id="kanban-view" class="kanban-view hidden"></div>
-          <div id="calendar-view" class="calendar-view hidden"></div>
+          <div class="state-message error hidden" id="error-state" role="alert">
+            <i data-lucide="circle-alert"></i>
+            <span id="error-message">Nao foi possivel carregar as tarefas.</span>
+            <button class="secondary-button" id="retry-button" type="button">Tentar novamente</button>
+          </div>
+
+          <div class="table-wrap hidden" id="table-wrap">
+            <table class="task-table">
+              <thead>
+                <tr>
+                  <th>Titulo</th>
+                  <th>Status</th>
+                  <th>Prioridade</th>
+                  <th>Progresso</th>
+                  <th>Acoes</th>
+                </tr>
+              </thead>
+              <tbody id="task-table-body"></tbody>
+            </table>
+          </div>
 
           <div class="empty-state hidden" id="empty-state">
             <i data-lucide="clipboard-list"></i>
-            <h2>No tasks found</h2>
-            <p>Create a task or adjust the current filters.</p>
-            <button class="add-button" type="button" data-empty-add><i data-lucide="plus"></i>Add Task</button>
+            <h2>Nenhuma tarefa encontrada</h2>
+            <p>Crie uma tarefa ou ajuste a busca e o filtro atual.</p>
+            <button class="add-button" type="button" data-empty-add>
+              <i data-lucide="plus"></i>
+              Nova tarefa
+            </button>
+          </div>
+        </section>
+
+        <section class="content-panel roadmap-panel hidden" id="roadmap-panel" aria-live="polite">
+          <div class="module-placeholder">
+            <span class="module-status" id="roadmap-status">Em breve</span>
+            <h2 id="roadmap-title">Modulo em desenvolvimento</h2>
+            <p id="roadmap-description">Este modulo esta planejado para uma versao futura do Trackio.</p>
+            <div class="module-notice">
+              <i data-lucide="construction"></i>
+              <span id="roadmap-notice">Ainda nao disponivel nesta versao.</span>
+            </div>
           </div>
         </section>
       </main>
@@ -159,10 +193,10 @@
       <form id="task-form" method="dialog">
         <div class="dialog-head">
           <div>
-            <span id="dialog-kicker">New Task</span>
-            <h2 id="dialog-title">Add task details</h2>
+            <span id="dialog-kicker">Nova tarefa</span>
+            <h2 id="dialog-title">Detalhes da tarefa</h2>
           </div>
-          <button class="icon-button" id="close-dialog" type="button" aria-label="Close">
+          <button class="icon-button" id="close-dialog" type="button" aria-label="Fechar">
             <i data-lucide="x"></i>
           </button>
         </div>
@@ -170,23 +204,23 @@
         <input type="hidden" id="task-id">
 
         <label>
-          <span>Task Name</span>
+          <span>Titulo</span>
           <input id="task-title" type="text" maxlength="255" required>
         </label>
 
         <label>
-          <span>Description</span>
+          <span>Descricao</span>
           <textarea id="task-description" maxlength="2000" rows="3"></textarea>
         </label>
 
         <div class="form-grid">
           <label>
-            <span>Assignee</span>
-            <input id="task-assignee" type="text" maxlength="120" placeholder="e.g. Lisa Kim">
+            <span>Responsavel</span>
+            <input id="task-assignee" type="text" maxlength="120">
           </label>
           <label>
-            <span>Project Name</span>
-            <input id="task-project" type="text" maxlength="160" placeholder="e.g. IT Compliance Review">
+            <span>Projeto</span>
+            <input id="task-project" type="text" maxlength="160">
           </label>
         </div>
 
@@ -194,28 +228,28 @@
           <label>
             <span>Status</span>
             <select id="task-status">
-              <option value="PENDENTE">To Do</option>
-              <option value="EM_PROGRESSO">In Progress</option>
-              <option value="EM_REVISAO">In Review</option>
-              <option value="CONCLUIDO">Completed</option>
+              <option value="PENDENTE">Pendente</option>
+              <option value="EM_PROGRESSO">Em andamento</option>
+              <option value="EM_REVISAO">Em revisao</option>
+              <option value="CONCLUIDO">Concluida</option>
             </select>
           </label>
           <label>
-            <span>Priority</span>
+            <span>Prioridade</span>
             <select id="task-priority">
-              <option value="BAIXA">Low</option>
-              <option value="MEDIA">Medium</option>
-              <option value="ALTA">High</option>
+              <option value="BAIXA">Baixa</option>
+              <option value="MEDIA">Media</option>
+              <option value="ALTA">Alta</option>
             </select>
           </label>
           <label>
-            <span>Deadline</span>
+            <span>Prazo</span>
             <input id="task-due-date" type="date">
           </label>
         </div>
 
         <label>
-          <span>Progress <output id="progress-output">0%</output></span>
+          <span>Progresso <output id="progress-output">0%</output></span>
           <input id="task-progress" type="range" min="0" max="100" step="1" value="0">
         </label>
 
@@ -224,11 +258,14 @@
         <div class="dialog-actions">
           <button class="danger-button hidden" id="delete-task-button" type="button">
             <i data-lucide="trash-2"></i>
-            Delete
+            Excluir
           </button>
           <span></span>
-          <button class="secondary-button" id="cancel-dialog" type="button">Cancel</button>
-          <button class="add-button" type="submit"><i data-lucide="save"></i>Save Task</button>
+          <button class="secondary-button" id="cancel-dialog" type="button">Cancelar</button>
+          <button class="add-button" type="submit">
+            <i data-lucide="save"></i>
+            Salvar
+          </button>
         </div>
       </form>
     </dialog>
@@ -236,6 +273,7 @@
     <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
     <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+    <script src="/task-api.js"></script>
     <script src="/app.js"></script>
   </body>
 </html>

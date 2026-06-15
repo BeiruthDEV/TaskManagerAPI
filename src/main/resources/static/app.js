@@ -1,44 +1,91 @@
-const API_URL = "/api/tasks";
-
 const statusConfig = {
-  PENDENTE: { label: "To Do", key: "todo", titleClass: "todo" },
-  EM_PROGRESSO: { label: "In Progress", key: "progress", titleClass: "progress" },
-  EM_REVISAO: { label: "In Review", key: "review", titleClass: "review" },
-  CONCLUIDO: { label: "Completed", key: "completed", titleClass: "completed" },
+  PENDENTE: { label: "Pendente", className: "status-pendente" },
+  EM_PROGRESSO: { label: "Em andamento", className: "status-em-progresso" },
+  EM_REVISAO: { label: "Em revisao", className: "status-em-revisao" },
+  CONCLUIDO: { label: "Concluida", className: "status-concluido" },
 };
 
 const priorityConfig = {
-  BAIXA: { label: "Low", className: "priority-baixa" },
-  MEDIA: { label: "Medium", className: "priority-media" },
-  ALTA: { label: "High", className: "priority-alta" },
+  BAIXA: { label: "Baixa", className: "priority-baixa" },
+  MEDIA: { label: "Media", className: "priority-media" },
+  ALTA: { label: "Alta", className: "priority-alta" },
+};
+
+const roadmapModules = {
+  calendar: {
+    title: "Calendar",
+    description: "Organizacao futura de agendas, prazos e eventos vinculados ao trabalho do time.",
+  },
+  performance: {
+    title: "Performance",
+    description: "Acompanhamento planejado de desempenho, metas e sinais operacionais por equipe.",
+  },
+  employees: {
+    title: "Employees",
+    description: "Cadastro e consulta centralizada de colaboradores em uma etapa futura da plataforma.",
+  },
+  invoices: {
+    title: "Invoices",
+    description: "Controle planejado de faturas, cobrancas e historico financeiro operacional.",
+  },
+  payrolls: {
+    title: "Payrolls",
+    description: "Modulo futuro para apoiar ciclos de folha, pagamentos e registros relacionados.",
+  },
+  recruitment: {
+    title: "Recruitment & Hiring",
+    description: "Fluxo planejado para acompanhar vagas, candidatos e etapas de contratacao.",
+  },
+  integration: {
+    title: "Integration",
+    description: "Area futura para conectar o Trackio a ferramentas externas e automacoes.",
+  },
+  help: {
+    title: "Help & Center",
+    description: "Central planejada de suporte, documentacao e orientacao para usuarios.",
+  },
 };
 
 const state = {
   tasks: [],
-  view: "list",
   query: "",
   status: "",
-  priority: "",
-  collapsed: new Set(),
   selectedTask: null,
-  openMenuId: null,
+  loading: false,
+  error: "",
+  view: "tasks",
+  roadmapModule: "",
 };
 
 const el = {
-  globalSearch: document.querySelector("#global-search"),
+  pageHeading: document.querySelector("#page-heading"),
+  pageSubtitle: document.querySelector("#page-subtitle"),
+  tasksPanel: document.querySelector("#tasks-panel"),
+  roadmapPanel: document.querySelector("#roadmap-panel"),
+  tasksNav: document.querySelector("[data-main-view='tasks']"),
+  roadmapLinks: document.querySelectorAll("[data-roadmap-module]"),
+  roadmap: {
+    status: document.querySelector("#roadmap-status"),
+    title: document.querySelector("#roadmap-title"),
+    description: document.querySelector("#roadmap-description"),
+    notice: document.querySelector("#roadmap-notice"),
+  },
   taskSearch: document.querySelector("#task-search"),
-  filterButton: document.querySelector("#filter-button"),
-  filterPopover: document.querySelector("#filter-popover"),
   statusFilter: document.querySelector("#status-filter"),
-  priorityFilter: document.querySelector("#priority-filter"),
-  clearFilters: document.querySelector("#clear-filters"),
-  listView: document.querySelector("#list-view"),
-  kanbanView: document.querySelector("#kanban-view"),
-  calendarView: document.querySelector("#calendar-view"),
+  tableWrap: document.querySelector("#table-wrap"),
+  tableBody: document.querySelector("#task-table-body"),
+  loadingState: document.querySelector("#loading-state"),
+  errorState: document.querySelector("#error-state"),
+  errorMessage: document.querySelector("#error-message"),
+  retryButton: document.querySelector("#retry-button"),
   emptyState: document.querySelector("#empty-state"),
   addButtons: document.querySelectorAll("#add-task-button, [data-empty-add]"),
-  quickStatusButtons: document.querySelectorAll("[data-quick-status]"),
-  viewButtons: document.querySelectorAll("[data-view]"),
+  summary: {
+    total: document.querySelector("#summary-total"),
+    pending: document.querySelector("#summary-pending"),
+    progress: document.querySelector("#summary-progress"),
+    completed: document.querySelector("#summary-completed"),
+  },
   dialog: document.querySelector("#task-dialog"),
   form: document.querySelector("#task-form"),
   closeDialog: document.querySelector("#close-dialog"),
@@ -62,301 +109,194 @@ const el = {
   },
 };
 
-async function request(url, options = {}) {
-  const response = await fetch(url, {
-    headers: { "Content-Type": "application/json", ...options.headers },
-    ...options,
-  });
-
-  if (!response.ok) {
-    const payload = await response.json().catch(() => null);
-    throw new Error(payload?.message || "Request failed.");
-  }
-
-  if (response.status === 204) {
-    return null;
-  }
-
-  return response.json();
-}
-
 async function loadTasks() {
-  const params = new URLSearchParams();
-  if (state.status) {
-    params.set("status", state.status);
-  }
-  if (state.priority) {
-    params.set("priority", state.priority);
-  }
-
-  const endpoint = params.toString()
-    ? `${API_URL}/filter?${params.toString()}`
-    : `${API_URL}?page=0&size=100`;
-
-  const data = await request(endpoint);
-  state.tasks = Array.isArray(data) ? data : data.content || [];
+  state.loading = true;
+  state.error = "";
   render();
+
+  try {
+    if (!window.TaskApi && typeof TaskApi === "undefined") {
+      throw new Error("Cliente da API de tarefas nao foi carregado.");
+    }
+    state.tasks = await TaskApi.list();
+  } catch (error) {
+    state.tasks = [];
+    state.error = error.message || "Nao foi possivel carregar as tarefas.";
+  } finally {
+    state.loading = false;
+    render();
+  }
 }
 
 function visibleTasks() {
   const term = state.query.trim().toLowerCase();
-  if (!term) {
-    return state.tasks;
-  }
-
   return state.tasks.filter((task) => {
+    const normalized = normalizeTask(task);
+
+    if (state.status && normalized.status !== state.status) {
+      return false;
+    }
+
+    if (!term) {
+      return true;
+    }
+
     const values = [
-      taskCode(task),
-      task.title,
+      normalized.title,
       task.description,
-      task.assignee,
-      task.projectName,
-      priorityConfig[task.priority]?.label,
-      statusConfig[task.status]?.label,
+      normalized.status,
+      statusLabel(normalized.status),
+      normalized.priority,
+      priorityLabel(normalized.priority),
     ];
     return values.some((value) => String(value || "").toLowerCase().includes(term));
   });
 }
 
 function render() {
+  renderNavigation();
+
+  const isTasksView = state.view === "tasks";
+  el.tasksPanel.classList.toggle("hidden", !isTasksView);
+  el.roadmapPanel.classList.toggle("hidden", isTasksView);
+
+  if (!isTasksView) {
+    renderRoadmapPanel();
+    renderIcons();
+    return;
+  }
+
+  el.pageHeading.textContent = "Tasks";
+  el.pageSubtitle.textContent = "Gerencie as tarefas do time";
+
   const tasks = visibleTasks();
-  el.emptyState.classList.toggle("hidden", tasks.length !== 0);
-  renderView(tasks);
+  const hasTasks = tasks.length > 0;
+  const hasError = Boolean(state.error);
+
+  renderSummary();
+
+  el.loadingState.classList.toggle("hidden", !state.loading);
+  el.errorState.classList.toggle("hidden", !hasError || state.loading);
+  el.tableWrap.classList.toggle("hidden", state.loading || hasError || !hasTasks);
+  el.emptyState.classList.toggle("hidden", state.loading || hasError || hasTasks);
+
+  if (hasError) {
+    el.errorMessage.textContent = state.error;
+  }
+
+  if (hasTasks) {
+    renderTable(tasks);
+  } else {
+    el.tableBody.innerHTML = "";
+  }
+
   renderIcons();
 }
 
-function renderView(tasks) {
-  el.listView.classList.toggle("hidden", state.view !== "list" || tasks.length === 0);
-  el.kanbanView.classList.toggle("hidden", state.view !== "kanban" || tasks.length === 0);
-  el.calendarView.classList.toggle("hidden", state.view !== "calendar" || tasks.length === 0);
+function renderNavigation() {
+  el.tasksNav.classList.toggle("active", state.view === "tasks");
 
-  if (state.view === "list") {
-    renderList(tasks);
-  }
-  if (state.view === "kanban") {
-    renderKanban(tasks);
-  }
-  if (state.view === "calendar") {
-    renderCalendar(tasks);
-  }
+  el.roadmapLinks.forEach((button) => {
+    const isActive = state.view === "roadmap" && button.dataset.roadmapModule === state.roadmapModule;
+    button.classList.toggle("active", isActive);
+    button.setAttribute("aria-pressed", String(isActive));
+  });
 }
 
-function groupedTasks(tasks) {
-  return Object.keys(statusConfig).map((status) => ({
-    status,
-    config: statusConfig[status],
-    tasks: tasks.filter((task) => task.status === status),
-  }));
+function renderRoadmapPanel() {
+  const module = roadmapModules[state.roadmapModule] || roadmapModules.calendar;
+  el.pageHeading.textContent = module.title;
+  el.pageSubtitle.textContent = "Modulo planejado no roadmap do produto";
+  el.roadmap.status.textContent = "Em breve";
+  el.roadmap.title.textContent = module.title;
+  el.roadmap.description.textContent = module.description;
+  el.roadmap.notice.textContent = "Este modulo ainda nao esta disponivel nesta versao.";
 }
 
-function renderList(tasks) {
-  el.listView.innerHTML = groupedTasks(tasks)
-    .map(({ status, config, tasks: sectionTasks }) => {
-      const collapsed = state.collapsed.has(status);
-      const rows = collapsed ? "" : renderRows(sectionTasks);
-      return `
-        <section class="task-section" data-section="${status}">
-          <header class="section-head">
-            <span class="section-title ${config.titleClass}">${config.label}</span>
-            <span class="section-count">${sectionTasks.length}</span>
-            <button class="collapse-button" type="button" data-collapse="${status}" aria-label="Toggle ${config.label}">
-              <i data-lucide="${collapsed ? "chevron-down" : "chevron-up"}"></i>
-            </button>
-            <button class="view-all" type="button" data-view-all="${status}">View All <i data-lucide="arrow-up-right"></i></button>
-          </header>
-          <table class="task-table">
-            <thead>
-              <tr>
-                <th><input type="checkbox" aria-label="Select section"></th>
-                <th><span class="sort-label">Task ID <i data-lucide="chevrons-up-down"></i></span></th>
-                <th><span class="sort-label">Task Name <i data-lucide="chevrons-up-down"></i></span></th>
-                <th><span class="sort-label">Assignee <i data-lucide="chevrons-up-down"></i></span></th>
-                <th><span class="sort-label">Project Name <i data-lucide="chevrons-up-down"></i></span></th>
-                <th><span class="sort-label">Progress <i data-lucide="chevrons-up-down"></i></span></th>
-                <th><span class="sort-label">Deadline <i data-lucide="chevrons-up-down"></i></span></th>
-                <th><span class="sort-label">Priority <i data-lucide="chevrons-up-down"></i></span></th>
-                <th>Action</th>
-              </tr>
-            </thead>
-            <tbody>${rows}</tbody>
-          </table>
-        </section>
-      `;
-    })
-    .join("");
+function renderSummary() {
+  const allTasks = state.tasks;
+  const pending = countByStatus(allTasks, "PENDENTE");
+  const inProgress = countByStatus(allTasks, "EM_PROGRESSO");
+  const completed = countByStatus(allTasks, "CONCLUIDO");
 
-  bindDynamicActions();
+  el.summary.total.textContent = allTasks.length;
+  el.summary.pending.textContent = pending;
+  el.summary.progress.textContent = inProgress;
+  el.summary.completed.textContent = completed;
 }
 
-function renderRows(tasks) {
-  if (tasks.length === 0) {
+function countByStatus(tasks, status) {
+  return tasks.filter((task) => normalizeTask(task).status === status).length;
+}
+
+function renderTable(tasks) {
+  el.tableBody.innerHTML = tasks.map((task) => {
+    const normalized = normalizeTask(task);
+    const status = statusConfig[normalized.status];
+    const priority = priorityConfig[normalized.priority];
+    const progress = safeProgress(normalized.progress);
+    const canMutate = normalized.id !== null && normalized.id !== undefined;
+
     return `
       <tr>
-        <td colspan="9" class="group-empty">
-          <div class="group-empty-content">
-            <i data-lucide="clipboard-list"></i>
-            <span>No tasks in this group</span>
-            <button class="ghost-button" type="button" data-empty-add>
-              <i data-lucide="plus"></i>
-              Create New Task
-            </button>
-          </div>
-        </td>
-      </tr>
-    `;
-  }
-
-  return tasks.map((task) => {
-    const priority = priorityConfig[task.priority] || priorityConfig.MEDIA;
-    const progress = safeProgress(task.progress);
-    return `
-      <tr>
-        <td><input type="checkbox" aria-label="Select ${escapeHtml(task.title)}"></td>
-        <td class="task-id">${taskCode(task)}</td>
-        <td><button class="task-name" type="button" data-edit="${task.id}">${escapeHtml(task.title)}</button></td>
         <td>
-          <span class="person">
-            <span class="avatar ${avatarTone(task.assignee)}">${initials(task.assignee)}</span>
-            ${escapeHtml(task.assignee || "Unassigned")}
-          </span>
+          <button class="task-name" type="button" ${canMutate ? `data-edit="${normalized.id}"` : "disabled"}>
+            ${escapeHtml(normalized.title)}
+          </button>
+          ${task.description ? `<span class="task-description">${escapeHtml(task.description)}</span>` : ""}
         </td>
-        <td class="project-name">${escapeHtml(task.projectName || "General Workspace")}</td>
+        <td><span class="status-pill ${status?.className || "status-pendente"}">${statusLabel(normalized.status)}</span></td>
+        <td><span class="priority-pill ${priority?.className || "priority-empty"}">${priorityLabel(normalized.priority)}</span></td>
         <td class="progress-cell">
           <span class="progress-text">${progress}%</span>
           <span class="progress-bar"><span style="width:${progress}%"></span></span>
         </td>
-        <td class="deadline">${formatDate(task.dueDate)}</td>
-        <td><span class="priority-pill ${priority.className}">${priority.label}</span></td>
-        <td class="row-menu">
-          <button class="row-action" type="button" data-menu="${task.id}" aria-label="Open actions">
-            <i data-lucide="ellipsis"></i>
+        <td class="actions-cell">
+          <button class="icon-button" type="button" ${canMutate ? `data-edit="${normalized.id}"` : "disabled"} aria-label="Editar ${escapeHtml(normalized.title)}">
+            <i data-lucide="pencil"></i>
           </button>
-          ${state.openMenuId === task.id ? actionMenu(task) : ""}
+          <button class="icon-button danger-icon" type="button" ${canMutate ? `data-delete="${normalized.id}"` : "disabled"} aria-label="Excluir ${escapeHtml(normalized.title)}">
+            <i data-lucide="trash-2"></i>
+          </button>
         </td>
       </tr>
     `;
   }).join("");
+
+  bindTableActions();
 }
 
-function actionMenu(task) {
-  return `
-    <div class="action-menu">
-      <button type="button" data-edit="${task.id}"><i data-lucide="pencil"></i>Edit</button>
-      <button type="button" data-complete="${task.id}"><i data-lucide="circle-check"></i>Complete</button>
-      <button type="button" data-delete="${task.id}"><i data-lucide="trash-2"></i>Delete</button>
-    </div>
-  `;
-}
-
-function renderKanban(tasks) {
-  el.kanbanView.innerHTML = groupedTasks(tasks)
-    .map(({ config, tasks: columnTasks }) => `
-      <section class="kanban-column">
-        <h3>${config.label} <span class="section-count">${columnTasks.length}</span></h3>
-        ${columnTasks.map((task) => `
-          <button class="kanban-card" type="button" data-edit="${task.id}">
-            <strong>${escapeHtml(task.title)}</strong>
-            <span>${escapeHtml(task.projectName || "General Workspace")}</span>
-            <span>${safeProgress(task.progress)}% - ${priorityConfig[task.priority]?.label || "Medium"}</span>
-          </button>
-        `).join("") || "<span class='project-name'>No tasks.</span>"}
-      </section>
-    `)
-    .join("");
-
-  bindDynamicActions();
-}
-
-function renderCalendar(tasks) {
-  const byDay = new Map();
-  tasks.forEach((task) => {
-    const key = task.dueDate || "No deadline";
-    byDay.set(key, [...(byDay.get(key) || []), task]);
-  });
-
-  el.calendarView.innerHTML = [...byDay.entries()]
-    .sort(([a], [b]) => a.localeCompare(b))
-    .map(([day, dayTasks]) => `
-      <section class="calendar-day">
-        <h3>${day === "No deadline" ? day : formatDate(day)}</h3>
-        ${dayTasks.map((task) => `
-          <button class="kanban-card" type="button" data-edit="${task.id}">
-            <strong>${escapeHtml(task.title)}</strong>
-            <span>${statusConfig[task.status]?.label || "Task"} - ${escapeHtml(task.assignee || "Unassigned")}</span>
-          </button>
-        `).join("")}
-      </section>
-    `)
-    .join("");
-
-  bindDynamicActions();
-}
-
-function bindDynamicActions() {
-  document.querySelectorAll("[data-collapse]").forEach((button) => {
-    button.addEventListener("click", () => {
-      const status = button.dataset.collapse;
-      if (state.collapsed.has(status)) {
-        state.collapsed.delete(status);
-      } else {
-        state.collapsed.add(status);
-      }
-      render();
-    });
-  });
-
-  document.querySelectorAll("[data-view-all]").forEach((button) => {
-    button.addEventListener("click", () => {
-      state.status = button.dataset.viewAll;
-      el.statusFilter.value = state.status;
-      loadTasks();
-    });
-  });
-
+function bindTableActions() {
   document.querySelectorAll("[data-edit]").forEach((button) => {
     button.addEventListener("click", () => {
-      const task = state.tasks.find((item) => item.id === Number(button.dataset.edit));
+      const task = state.tasks.find((item) => normalizeTask(item).id === Number(button.dataset.edit));
       openDialog(task);
     });
-  });
-
-  document.querySelectorAll("[data-menu]").forEach((button) => {
-    button.addEventListener("click", () => {
-      state.openMenuId = state.openMenuId === Number(button.dataset.menu) ? null : Number(button.dataset.menu);
-      render();
-    });
-  });
-
-  document.querySelectorAll("[data-complete]").forEach((button) => {
-    button.addEventListener("click", () => completeTask(Number(button.dataset.complete)));
   });
 
   document.querySelectorAll("[data-delete]").forEach((button) => {
     button.addEventListener("click", () => deleteTask(Number(button.dataset.delete)));
   });
-
-  el.listView.querySelectorAll("[data-empty-add]").forEach((button) => {
-    button.addEventListener("click", () => openDialog());
-  });
 }
 
 function openDialog(task = null) {
+  const normalized = task ? normalizeTask(task) : null;
   state.selectedTask = task;
   el.formError.textContent = "";
   el.deleteButton.classList.toggle("hidden", !task);
-  el.dialogKicker.textContent = task ? "Edit Task" : "New Task";
-  el.dialogTitle.textContent = task ? task.title : "Add task details";
+  el.dialogKicker.textContent = task ? "Editar tarefa" : "Nova tarefa";
+  el.dialogTitle.textContent = normalized ? normalized.title : "Detalhes da tarefa";
 
-  el.fields.id.value = task?.id || "";
-  el.fields.title.value = task?.title || "";
+  el.fields.id.value = normalized?.id || "";
+  el.fields.title.value = normalized?.title || "";
   el.fields.description.value = task?.description || "";
   el.fields.assignee.value = task?.assignee || "";
   el.fields.project.value = task?.projectName || "";
-  el.fields.status.value = task?.status || "PENDENTE";
-  el.fields.priority.value = task?.priority || "MEDIA";
+  el.fields.status.value = normalized?.status || "PENDENTE";
+  el.fields.priority.value = normalized?.priority || "MEDIA";
   el.fields.dueDate.value = task?.dueDate || "";
-  el.fields.progress.value = safeProgress(task?.progress);
-  el.progressOutput.textContent = `${safeProgress(task?.progress)}%`;
+  el.fields.progress.value = safeProgress(normalized?.progress);
+  el.progressOutput.textContent = `${safeProgress(normalized?.progress)}%`;
 
   el.dialog.showModal();
   renderIcons();
@@ -365,7 +305,6 @@ function openDialog(task = null) {
 function closeDialog() {
   el.dialog.close();
   state.selectedTask = null;
-  state.openMenuId = null;
 }
 
 async function saveTask(event) {
@@ -385,37 +324,17 @@ async function saveTask(event) {
 
   try {
     if (el.fields.id.value) {
-      await request(`${API_URL}/${el.fields.id.value}`, {
-        method: "PUT",
-        body: JSON.stringify(payload),
-      });
-      showToast("Task updated");
+      await TaskApi.update(el.fields.id.value, payload);
+      showToast("Tarefa atualizada");
     } else {
-      await request(API_URL, {
-        method: "POST",
-        body: JSON.stringify(payload),
-      });
-      showToast("Task added");
+      await TaskApi.create(payload);
+      showToast("Tarefa criada");
     }
 
     closeDialog();
     await loadTasks();
   } catch (error) {
     el.formError.textContent = error.message;
-  }
-}
-
-async function completeTask(id) {
-  try {
-    await request(`${API_URL}/${id}`, {
-      method: "PUT",
-      body: JSON.stringify({ status: "CONCLUIDO", progress: 100 }),
-    });
-    state.openMenuId = null;
-    showToast("Task completed");
-    await loadTasks();
-  } catch (error) {
-    showToast(error.message);
   }
 }
 
@@ -424,16 +343,16 @@ async function deleteTask(id = state.selectedTask?.id) {
     return;
   }
 
-  const task = state.tasks.find((item) => item.id === id);
-  const confirmed = window.confirm(`Delete "${task?.title || "this task"}"?`);
+  const task = state.tasks.find((item) => normalizeTask(item).id === id);
+  const confirmed = window.confirm(`Excluir "${normalizeTask(task || {}).title || "esta tarefa"}"?`);
   if (!confirmed) {
     return;
   }
 
   try {
-    await request(`${API_URL}/${id}`, { method: "DELETE" });
+    await TaskApi.remove(id);
     closeDialog();
-    showToast("Task deleted");
+    showToast("Tarefa excluida");
     await loadTasks();
   } catch (error) {
     el.formError.textContent = error.message;
@@ -442,89 +361,56 @@ async function deleteTask(id = state.selectedTask?.id) {
 }
 
 function bindEvents() {
+  el.tasksNav.addEventListener("click", (event) => {
+    event.preventDefault();
+    showTasksView();
+  });
+
+  el.roadmapLinks.forEach((button) => {
+    button.addEventListener("click", () => showRoadmapModule(button.dataset.roadmapModule));
+  });
+
   el.addButtons.forEach((button) => button.addEventListener("click", () => openDialog()));
   el.closeDialog.addEventListener("click", closeDialog);
   el.cancelDialog.addEventListener("click", closeDialog);
   el.form.addEventListener("submit", saveTask);
   el.deleteButton.addEventListener("click", () => deleteTask());
+  el.retryButton.addEventListener("click", loadTasks);
   el.fields.progress.addEventListener("input", () => {
     el.progressOutput.textContent = `${el.fields.progress.value}%`;
   });
 
-  [el.globalSearch, el.taskSearch].forEach((input) => {
-    input.addEventListener("input", () => {
-      state.query = input.value;
-      el.globalSearch.value = state.query;
-      el.taskSearch.value = state.query;
-      render();
-    });
-  });
-
-  el.filterButton.addEventListener("click", () => {
-    el.filterPopover.hidden = !el.filterPopover.hidden;
+  el.taskSearch.addEventListener("input", () => {
+    state.query = el.taskSearch.value;
+    render();
   });
 
   el.statusFilter.addEventListener("change", async () => {
     state.status = el.statusFilter.value;
-    await loadTasks();
-  });
-
-  el.priorityFilter.addEventListener("change", async () => {
-    state.priority = el.priorityFilter.value;
-    await loadTasks();
-  });
-
-  el.clearFilters.addEventListener("click", async () => {
-    state.status = "";
-    state.priority = "";
-    el.statusFilter.value = "";
-    el.priorityFilter.value = "";
-    await loadTasks();
-  });
-
-  el.quickStatusButtons.forEach((button) => {
-    button.addEventListener("click", async () => {
-      state.status = button.dataset.quickStatus;
-      el.statusFilter.value = state.status;
-      await loadTasks();
-    });
-  });
-
-  el.viewButtons.forEach((button) => {
-    button.addEventListener("click", () => {
-      state.view = button.dataset.view;
-      el.viewButtons.forEach((item) => item.classList.toggle("active", item === button));
-      render();
-    });
-  });
-
-  document.addEventListener("click", (event) => {
-    if (!event.target.closest(".row-menu")) {
-      if (state.openMenuId !== null) {
-        state.openMenuId = null;
-        render();
-      }
-    }
+    render();
   });
 }
 
-function taskCode(task) {
-  const id = String(task.id || 0).padStart(3, "0");
-  return `P${991000 + Number(id)}-${id.slice(-1)}`;
+function showTasksView() {
+  state.view = "tasks";
+  state.roadmapModule = "";
+  window.history.replaceState(null, "", "/");
+  render();
 }
 
-function initials(name = "") {
-  const parts = name.trim().split(/\s+/).filter(Boolean);
-  if (parts.length === 0) {
-    return "NA";
+function showRoadmapModule(moduleKey) {
+  state.view = "roadmap";
+  state.roadmapModule = moduleKey;
+  window.history.replaceState(null, "", `#${moduleKey}`);
+  render();
+}
+
+function restoreInitialView() {
+  const moduleKey = window.location.hash.replace("#", "");
+  if (roadmapModules[moduleKey]) {
+    state.view = "roadmap";
+    state.roadmapModule = moduleKey;
   }
-  return parts.slice(0, 2).map((part) => part[0]).join("").toUpperCase();
-}
-
-function avatarTone(name = "") {
-  const tones = ["", "coral", "blue"];
-  const index = [...name].reduce((sum, char) => sum + char.charCodeAt(0), 0) % tones.length;
-  return tones[index];
 }
 
 function safeProgress(progress = 0) {
@@ -535,16 +421,22 @@ function safeProgress(progress = 0) {
   return Math.min(100, Math.max(0, value));
 }
 
-function formatDate(date) {
-  if (!date) {
-    return "No deadline";
-  }
+function normalizeTask(task = {}) {
+  return {
+    id: task.id ?? null,
+    title: task.title || task.name || "Sem titulo",
+    status: task.status || "PENDENTE",
+    priority: task.priority || "",
+    progress: task.progress ?? 0,
+  };
+}
 
-  return new Intl.DateTimeFormat("en-US", {
-    month: "long",
-    day: "numeric",
-    year: "numeric",
-  }).format(new Date(`${date}T00:00:00`));
+function statusLabel(status) {
+  return statusConfig[status]?.label || status || "Pendente";
+}
+
+function priorityLabel(priority) {
+  return priorityConfig[priority]?.label || priority || "-";
 }
 
 function emptyToNull(value) {
@@ -576,15 +468,11 @@ function renderIcons() {
   }
 }
 
-async function init() {
+function init() {
   bindEvents();
+  restoreInitialView();
   renderIcons();
-
-  try {
-    await loadTasks();
-  } catch (error) {
-    showToast(error.message);
-  }
+  loadTasks();
 }
 
 init();
