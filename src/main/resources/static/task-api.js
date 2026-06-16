@@ -76,11 +76,21 @@ const TaskApi = (() => {
     return request(`${API_URL}/${id}`, { method: "DELETE" });
   }
 
+  function dashboard() {
+    return request(`${API_URL}/dashboard`);
+  }
+
+  function kanban() {
+    return request(`${API_URL}/kanban`);
+  }
+
   return {
     list,
     normalizeTasksResponse,
     create,
     update,
     remove,
+    dashboard,
+    kanban,
   };
 })();

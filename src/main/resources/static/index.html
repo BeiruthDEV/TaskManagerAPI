@@ -22,13 +22,17 @@
 
         <p class="menu-title">Core</p>
         <nav class="side-nav" aria-label="Menu principal">
-          <button class="side-link disabled" type="button" disabled>
+          <a href="#dashboard" class="side-link" data-main-view="dashboard">
             <i data-lucide="layout-dashboard"></i>
             <span class="side-link-label">Dashboard</span>
-          </button>
+          </a>
           <a href="/" class="side-link active" data-main-view="tasks">
             <i data-lucide="clipboard-list"></i>
             <span class="side-link-label">Tasks</span>
+          </a>
+          <a href="#kanban" class="side-link" data-main-view="kanban">
+            <i data-lucide="kanban-square"></i>
+            <span class="side-link-label">Kanban</span>
           </a>
           <button class="side-link disabled" type="button" disabled>
             <i data-lucide="folder"></i>
@@ -172,6 +176,75 @@
               <i data-lucide="plus"></i>
               Nova tarefa
             </button>
+          </div>
+        </section>
+
+        <section class="content-panel dashboard-panel hidden" id="dashboard-panel" aria-live="polite">
+          <div class="state-message" id="dashboard-loading-state">
+            <i data-lucide="loader-circle"></i>
+            <span>Carregando dashboard...</span>
+          </div>
+
+          <div class="state-message error hidden" id="dashboard-error-state" role="alert">
+            <i data-lucide="circle-alert"></i>
+            <span id="dashboard-error-message">Nao foi possivel carregar o dashboard.</span>
+            <button class="secondary-button" id="dashboard-retry-button" type="button">Tentar novamente</button>
+          </div>
+
+          <div class="dashboard-content hidden" id="dashboard-content">
+            <div class="dashboard-kpi-grid" aria-label="Indicadores principais">
+              <article class="metric-card">
+                <span>Total</span>
+                <strong id="dashboard-total">0</strong>
+              </article>
+              <article class="metric-card">
+                <span>Concluidas</span>
+                <strong id="dashboard-completed">0</strong>
+              </article>
+              <article class="metric-card">
+                <span>Atrasadas</span>
+                <strong id="dashboard-overdue">0</strong>
+              </article>
+              <article class="metric-card">
+                <span>Conclusao</span>
+                <strong id="dashboard-rate">0%</strong>
+              </article>
+            </div>
+
+            <div class="dashboard-metrics-grid">
+              <section class="metric-section" aria-labelledby="status-distribution-title">
+                <header>
+                  <h2 id="status-distribution-title">Distribuicao por status</h2>
+                  <span id="status-distribution-total">0 tarefas</span>
+                </header>
+                <div class="distribution-list" id="dashboard-status-list"></div>
+              </section>
+
+              <section class="metric-section" aria-labelledby="priority-distribution-title">
+                <header>
+                  <h2 id="priority-distribution-title">Distribuicao por prioridade</h2>
+                  <span id="priority-distribution-total">0 tarefas</span>
+                </header>
+                <div class="distribution-list" id="dashboard-priority-list"></div>
+              </section>
+            </div>
+          </div>
+        </section>
+
+        <section class="content-panel kanban-panel hidden" id="kanban-panel" aria-live="polite">
+          <div class="state-message" id="kanban-loading-state">
+            <i data-lucide="loader-circle"></i>
+            <span>Carregando Kanban...</span>
+          </div>
+
+          <div class="state-message error hidden" id="kanban-error-state" role="alert">
+            <i data-lucide="circle-alert"></i>
+            <span id="kanban-error-message">Nao foi possivel carregar o Kanban.</span>
+            <button class="secondary-button" id="kanban-retry-button" type="button">Tentar novamente</button>
+          </div>
+
+          <div class="kanban-content hidden" id="kanban-content">
+            <div class="kanban-board" id="kanban-board" aria-label="Quadro Kanban por status"></div>
           </div>
         </section>
 

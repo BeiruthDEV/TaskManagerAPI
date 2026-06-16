@@ -11,6 +11,9 @@ const priorityConfig = {
   ALTA: { label: "Alta", className: "priority-alta" },
 };
 
+const statusOrder = ["PENDENTE", "EM_PROGRESSO", "EM_REVISAO", "CONCLUIDO"];
+const priorityOrder = ["ALTA", "MEDIA", "BAIXA"];
+
 const roadmapModules = {
   calendar: {
     title: "Calendar",
@@ -53,6 +56,12 @@ const state = {
   selectedTask: null,
   loading: false,
   error: "",
+  dashboard: null,
+  dashboardLoading: false,
+  dashboardError: "",
+  kanban: null,
+  kanbanLoading: false,
+  kanbanError: "",
   view: "tasks",
   roadmapModule: "",
 };
@@ -61,8 +70,10 @@ const el = {
   pageHeading: document.querySelector("#page-heading"),
   pageSubtitle: document.querySelector("#page-subtitle"),
   tasksPanel: document.querySelector("#tasks-panel"),
+  dashboardPanel: document.querySelector("#dashboard-panel"),
+  kanbanPanel: document.querySelector("#kanban-panel"),
   roadmapPanel: document.querySelector("#roadmap-panel"),
-  tasksNav: document.querySelector("[data-main-view='tasks']"),
+  mainLinks: document.querySelectorAll("[data-main-view]"),
   roadmapLinks: document.querySelectorAll("[data-roadmap-module]"),
   roadmap: {
     status: document.querySelector("#roadmap-status"),
@@ -78,6 +89,29 @@ const el = {
   errorState: document.querySelector("#error-state"),
   errorMessage: document.querySelector("#error-message"),
   retryButton: document.querySelector("#retry-button"),
+  dashboard: {
+    loading: document.querySelector("#dashboard-loading-state"),
+    error: document.querySelector("#dashboard-error-state"),
+    errorMessage: document.querySelector("#dashboard-error-message"),
+    retryButton: document.querySelector("#dashboard-retry-button"),
+    content: document.querySelector("#dashboard-content"),
+    total: document.querySelector("#dashboard-total"),
+    completed: document.querySelector("#dashboard-completed"),
+    overdue: document.querySelector("#dashboard-overdue"),
+    rate: document.querySelector("#dashboard-rate"),
+    statusTotal: document.querySelector("#status-distribution-total"),
+    priorityTotal: document.querySelector("#priority-distribution-total"),
+    statusList: document.querySelector("#dashboard-status-list"),
+    priorityList: document.querySelector("#dashboard-priority-list"),
+  },
+  kanban: {
+    loading: document.querySelector("#kanban-loading-state"),
+    error: document.querySelector("#kanban-error-state"),
+    errorMessage: document.querySelector("#kanban-error-message"),
+    retryButton: document.querySelector("#kanban-retry-button"),
+    content: document.querySelector("#kanban-content"),
+    board: document.querySelector("#kanban-board"),
+  },
   emptyState: document.querySelector("#empty-state"),
   addButtons: document.querySelectorAll("#add-task-button, [data-empty-add]"),
   summary: {
@@ -128,6 +162,38 @@ async function loadTasks() {
   }
 }
 
+async function loadDashboard() {
+  state.dashboardLoading = true;
+  state.dashboardError = "";
+  render();
+
+  try {
+    state.dashboard = await TaskApi.dashboard();
+  } catch (error) {
+    state.dashboard = null;
+    state.dashboardError = error.message || "Nao foi possivel carregar o dashboard.";
+  } finally {
+    state.dashboardLoading = false;
+    render();
+  }
+}
+
+async function loadKanban() {
+  state.kanbanLoading = true;
+  state.kanbanError = "";
+  render();
+
+  try {
+    state.kanban = await TaskApi.kanban();
+  } catch (error) {
+    state.kanban = null;
+    state.kanbanError = error.message || "Nao foi possivel carregar o Kanban.";
+  } finally {
+    state.kanbanLoading = false;
+    render();
+  }
+}
+
 function visibleTasks() {
   const term = state.query.trim().toLowerCase();
   return state.tasks.filter((task) => {
@@ -157,10 +223,28 @@ function render() {
   renderNavigation();
 
   const isTasksView = state.view === "tasks";
-  el.tasksPanel.classList.toggle("hidden", !isTasksView);
-  el.roadmapPanel.classList.toggle("hidden", isTasksView);
+  const isDashboardView = state.view === "dashboard";
+  const isKanbanView = state.view === "kanban";
+  const isRoadmapView = state.view === "roadmap";
 
-  if (!isTasksView) {
+  el.tasksPanel.classList.toggle("hidden", !isTasksView);
+  el.dashboardPanel.classList.toggle("hidden", !isDashboardView);
+  el.kanbanPanel.classList.toggle("hidden", !isKanbanView);
+  el.roadmapPanel.classList.toggle("hidden", !isRoadmapView);
+
+  if (isDashboardView) {
+    renderDashboardPanel();
+    renderIcons();
+    return;
+  }
+
+  if (isKanbanView) {
+    renderKanbanPanel();
+    renderIcons();
+    return;
+  }
+
+  if (isRoadmapView) {
     renderRoadmapPanel();
     renderIcons();
     return;
@@ -194,12 +278,162 @@ function render() {
 }
 
 function renderNavigation() {
-  el.tasksNav.classList.toggle("active", state.view === "tasks");
+  el.mainLinks.forEach((link) => {
+    const isActive = state.view === link.dataset.mainView;
+    link.classList.toggle("active", isActive);
+    link.setAttribute("aria-current", isActive ? "page" : "false");
+  });
 
   el.roadmapLinks.forEach((button) => {
     const isActive = state.view === "roadmap" && button.dataset.roadmapModule === state.roadmapModule;
     button.classList.toggle("active", isActive);
     button.setAttribute("aria-pressed", String(isActive));
+  });
+}
+
+function renderDashboardPanel() {
+  el.pageHeading.textContent = "Dashboard";
+  el.pageSubtitle.textContent = "Indicadores operacionais do modulo de tarefas";
+
+  const hasError = Boolean(state.dashboardError);
+  const hasDashboard = Boolean(state.dashboard);
+
+  el.dashboard.loading.classList.toggle("hidden", !state.dashboardLoading);
+  el.dashboard.error.classList.toggle("hidden", !hasError || state.dashboardLoading);
+  el.dashboard.content.classList.toggle("hidden", state.dashboardLoading || hasError || !hasDashboard);
+
+  if (hasError) {
+    el.dashboard.errorMessage.textContent = state.dashboardError;
+  }
+
+  if (!hasDashboard) {
+    return;
+  }
+
+  const dashboard = normalizeDashboard(state.dashboard);
+  el.dashboard.total.textContent = dashboard.totalTasks;
+  el.dashboard.completed.textContent = dashboard.completedTasks;
+  el.dashboard.overdue.textContent = dashboard.overdueTasks;
+  el.dashboard.rate.textContent = `${formatPercent(dashboard.completionRate)}%`;
+  el.dashboard.statusTotal.textContent = `${dashboard.totalTasks} tarefas`;
+  el.dashboard.priorityTotal.textContent = `${dashboard.totalTasks} tarefas`;
+
+  renderDistributionList(
+    el.dashboard.statusList,
+    statusOrder,
+    dashboard.tasksByStatus,
+    statusLabel,
+    dashboard.totalTasks,
+    "status"
+  );
+  renderDistributionList(
+    el.dashboard.priorityList,
+    priorityOrder,
+    dashboard.tasksByPriority,
+    priorityLabel,
+    dashboard.totalTasks,
+    "priority"
+  );
+}
+
+function renderKanbanPanel() {
+  el.pageHeading.textContent = "Kanban";
+  el.pageSubtitle.textContent = "Tarefas agrupadas por status";
+
+  const hasError = Boolean(state.kanbanError);
+  const hasKanban = Boolean(state.kanban);
+
+  el.kanban.loading.classList.toggle("hidden", !state.kanbanLoading);
+  el.kanban.error.classList.toggle("hidden", !hasError || state.kanbanLoading);
+  el.kanban.content.classList.toggle("hidden", state.kanbanLoading || hasError || !hasKanban);
+
+  if (hasError) {
+    el.kanban.errorMessage.textContent = state.kanbanError;
+  }
+
+  if (!hasKanban) {
+    return;
+  }
+
+  const columns = normalizeKanbanColumns(state.kanban);
+  el.kanban.board.innerHTML = columns.map((column) => renderKanbanColumn(column)).join("");
+  bindKanbanActions();
+}
+
+function renderDistributionList(container, order, values, labelFn, totalTasks, type) {
+  container.innerHTML = order.map((key) => {
+    const count = Number(values?.[key] || 0);
+    const percent = totalTasks > 0 ? Math.round((count * 10000) / totalTasks) / 100 : 0;
+    const className = type === "status"
+      ? statusConfig[key]?.className || "status-pendente"
+      : priorityConfig[key]?.className || "priority-empty";
+
+    return `
+      <div class="distribution-row">
+        <div class="distribution-meta">
+          <span class="distribution-label ${className}">${labelFn(key)}</span>
+          <strong>${count}</strong>
+        </div>
+        <div class="distribution-track" aria-label="${labelFn(key)} ${formatPercent(percent)}%">
+          <span style="width:${Math.min(100, percent)}%"></span>
+        </div>
+      </div>
+    `;
+  }).join("");
+}
+
+function renderKanbanColumn(column) {
+  const tasks = column.tasks || [];
+  return `
+    <section class="kanban-column" aria-labelledby="kanban-${column.status}">
+      <header>
+        <h2 id="kanban-${column.status}">
+          <span class="status-dot ${statusConfig[column.status]?.className || "status-pendente"}"></span>
+          ${escapeHtml(column.title || statusLabel(column.status))}
+        </h2>
+        <span>${tasks.length}</span>
+      </header>
+      <div class="kanban-list">
+        ${tasks.length ? tasks.map(renderKanbanCard).join("") : renderKanbanEmpty()}
+      </div>
+    </section>
+  `;
+}
+
+function renderKanbanCard(task) {
+  const normalized = normalizeTask(task);
+  const priority = priorityConfig[normalized.priority];
+  const progress = safeProgress(normalized.progress);
+  const canMutate = normalized.id !== null && normalized.id !== undefined;
+
+  return `
+    <button class="kanban-card" type="button" ${canMutate ? `data-kanban-edit="${normalized.id}"` : "disabled"}>
+      <strong>${escapeHtml(normalized.title)}</strong>
+      ${task.description ? `<span>${escapeHtml(task.description)}</span>` : ""}
+      <div class="kanban-card-meta">
+        <span class="priority-pill ${priority?.className || "priority-empty"}">${priorityLabel(normalized.priority)}</span>
+        <span>${progress}%</span>
+      </div>
+      <span class="progress-bar"><span style="width:${progress}%"></span></span>
+    </button>
+  `;
+}
+
+function renderKanbanEmpty() {
+  return `
+    <div class="kanban-empty">
+      <i data-lucide="inbox"></i>
+      <span>Nenhuma tarefa</span>
+    </div>
+  `;
+}
+
+function bindKanbanActions() {
+  document.querySelectorAll("[data-kanban-edit]").forEach((button) => {
+    button.addEventListener("click", () => {
+      const task = state.tasks.find((item) => normalizeTask(item).id === Number(button.dataset.kanbanEdit));
+      openDialog(task);
+    });
   });
 }
 
@@ -331,8 +565,10 @@ async function saveTask(event) {
       showToast("Tarefa criada");
     }
 
+    invalidateDerivedViews();
     closeDialog();
     await loadTasks();
+    await refreshActiveDerivedView();
   } catch (error) {
     el.formError.textContent = error.message;
   }
@@ -351,9 +587,11 @@ async function deleteTask(id = state.selectedTask?.id) {
 
   try {
     await TaskApi.remove(id);
+    invalidateDerivedViews();
     closeDialog();
     showToast("Tarefa excluida");
     await loadTasks();
+    await refreshActiveDerivedView();
   } catch (error) {
     el.formError.textContent = error.message;
     showToast(error.message);
@@ -361,9 +599,11 @@ async function deleteTask(id = state.selectedTask?.id) {
 }
 
 function bindEvents() {
-  el.tasksNav.addEventListener("click", (event) => {
-    event.preventDefault();
-    showTasksView();
+  el.mainLinks.forEach((link) => {
+    link.addEventListener("click", (event) => {
+      event.preventDefault();
+      showMainView(link.dataset.mainView);
+    });
   });
 
   el.roadmapLinks.forEach((button) => {
@@ -376,6 +616,8 @@ function bindEvents() {
   el.form.addEventListener("submit", saveTask);
   el.deleteButton.addEventListener("click", () => deleteTask());
   el.retryButton.addEventListener("click", loadTasks);
+  el.dashboard.retryButton.addEventListener("click", loadDashboard);
+  el.kanban.retryButton.addEventListener("click", loadKanban);
   el.fields.progress.addEventListener("input", () => {
     el.progressOutput.textContent = `${el.fields.progress.value}%`;
   });
@@ -391,11 +633,19 @@ function bindEvents() {
   });
 }
 
-function showTasksView() {
-  state.view = "tasks";
+function showMainView(view) {
+  state.view = view;
   state.roadmapModule = "";
-  window.history.replaceState(null, "", "/");
+  window.history.replaceState(null, "", view === "tasks" ? "/" : `#${view}`);
   render();
+
+  if (view === "dashboard" && !state.dashboard && !state.dashboardLoading) {
+    loadDashboard();
+  }
+
+  if (view === "kanban" && !state.kanban && !state.kanbanLoading) {
+    loadKanban();
+  }
 }
 
 function showRoadmapModule(moduleKey) {
@@ -407,10 +657,56 @@ function showRoadmapModule(moduleKey) {
 
 function restoreInitialView() {
   const moduleKey = window.location.hash.replace("#", "");
+  if (moduleKey === "dashboard" || moduleKey === "kanban") {
+    state.view = moduleKey;
+    return;
+  }
+
   if (roadmapModules[moduleKey]) {
     state.view = "roadmap";
     state.roadmapModule = moduleKey;
   }
+}
+
+function invalidateDerivedViews() {
+  state.dashboard = null;
+  state.kanban = null;
+}
+
+async function refreshActiveDerivedView() {
+  if (state.view === "dashboard") {
+    await loadDashboard();
+  }
+
+  if (state.view === "kanban") {
+    await loadKanban();
+  }
+}
+
+function normalizeDashboard(payload = {}) {
+  return {
+    totalTasks: Number(payload.totalTasks || 0),
+    tasksByStatus: payload.tasksByStatus || {},
+    tasksByPriority: payload.tasksByPriority || {},
+    overdueTasks: Number(payload.overdueTasks || 0),
+    completedTasks: Number(payload.completedTasks || 0),
+    completionRate: Number(payload.completionRate || 0),
+  };
+}
+
+function normalizeKanbanColumns(payload = {}) {
+  const columns = Array.isArray(payload.columns) ? payload.columns : [];
+  const columnsByStatus = new Map(columns.map((column) => [column.status, column]));
+
+  return statusOrder.map((status) => {
+    const column = columnsByStatus.get(status) || {};
+    return {
+      status,
+      title: column.title || statusLabel(status),
+      total: Number(column.total || 0),
+      tasks: Array.isArray(column.tasks) ? column.tasks : [],
+    };
+  });
 }
 
 function safeProgress(progress = 0) {
@@ -437,6 +733,14 @@ function statusLabel(status) {
 
 function priorityLabel(priority) {
   return priorityConfig[priority]?.label || priority || "-";
+}
+
+function formatPercent(value) {
+  const number = Number(value);
+  if (Number.isNaN(number)) {
+    return "0";
+  }
+  return Number.isInteger(number) ? String(number) : number.toFixed(2);
 }
 
 function emptyToNull(value) {
@@ -473,6 +777,14 @@ function init() {
   restoreInitialView();
   renderIcons();
   loadTasks();
+
+  if (state.view === "dashboard") {
+    loadDashboard();
+  }
+
+  if (state.view === "kanban") {
+    loadKanban();
+  }
 }
 
 init();

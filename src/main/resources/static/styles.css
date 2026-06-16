@@ -567,6 +567,240 @@ kbd {
   line-height: 1;
 }
 
+.dashboard-content,
+.kanban-content {
+  display: grid;
+  gap: 16px;
+  min-height: 100%;
+}
+
+.dashboard-kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(130px, 1fr));
+  gap: 12px;
+}
+
+.metric-card {
+  display: grid;
+  gap: 8px;
+  min-height: 96px;
+  padding: 16px;
+  background:
+    linear-gradient(135deg, rgba(6, 182, 212, 0.08), transparent 58%),
+    #fff;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+}
+
+.metric-card span,
+.metric-section header span {
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.metric-card strong {
+  font-size: 30px;
+  line-height: 1;
+}
+
+.dashboard-metrics-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(280px, 1fr));
+  gap: 14px;
+}
+
+.metric-section {
+  min-height: 280px;
+  padding: 16px;
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+}
+
+.metric-section header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
+.metric-section h2 {
+  margin: 0;
+  font-size: 15px;
+}
+
+.distribution-list {
+  display: grid;
+  gap: 14px;
+}
+
+.distribution-row {
+  display: grid;
+  gap: 8px;
+}
+
+.distribution-meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.distribution-label {
+  display: inline-flex;
+  min-width: 112px;
+  justify-content: center;
+  padding: 6px 8px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 800;
+}
+
+.distribution-meta strong {
+  font-size: 13px;
+}
+
+.distribution-track {
+  height: 7px;
+  overflow: hidden;
+  background: #eef2f7;
+  border-radius: 999px;
+}
+
+.distribution-track span {
+  display: block;
+  height: 100%;
+  background: linear-gradient(90deg, var(--cyan-dark), var(--purple));
+  border-radius: inherit;
+}
+
+.kanban-board {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(220px, 1fr));
+  gap: 12px;
+  min-height: calc(100vh - 160px);
+}
+
+.kanban-column {
+  display: flex;
+  flex-direction: column;
+  min-height: 420px;
+  padding: 12px;
+  background: var(--panel-soft);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+}
+
+.kanban-column header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  min-height: 32px;
+  margin-bottom: 10px;
+}
+
+.kanban-column h2 {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
+  font-size: 13px;
+}
+
+.kanban-column header > span {
+  display: inline-flex;
+  min-width: 26px;
+  min-height: 24px;
+  align-items: center;
+  justify-content: center;
+  color: var(--muted);
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 800;
+}
+
+.status-dot {
+  width: 9px;
+  height: 9px;
+  min-width: 9px;
+  padding: 0;
+  border-radius: 999px;
+}
+
+.kanban-list {
+  display: grid;
+  align-content: start;
+  gap: 10px;
+  flex: 1;
+}
+
+.kanban-card {
+  display: grid;
+  gap: 10px;
+  width: 100%;
+  padding: 12px;
+  color: var(--text);
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  text-align: left;
+  transition: border 160ms ease, box-shadow 160ms ease, transform 160ms ease;
+}
+
+.kanban-card:hover {
+  border-color: rgba(6, 182, 212, 0.28);
+  box-shadow: 0 10px 22px rgba(15, 23, 42, 0.07);
+  transform: translateY(-1px);
+}
+
+.kanban-card strong {
+  font-size: 12px;
+  line-height: 1.35;
+}
+
+.kanban-card > span:not(.progress-bar) {
+  color: var(--muted);
+  font-size: 11px;
+  line-height: 1.35;
+}
+
+.kanban-card-meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.kanban-card-meta > span:last-child {
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 800;
+}
+
+.kanban-empty {
+  display: grid;
+  min-height: 126px;
+  place-items: center;
+  align-content: center;
+  gap: 8px;
+  color: var(--muted);
+  background: #fff;
+  border: 1px dashed var(--line-strong);
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.kanban-empty svg {
+  color: #cbd5e1;
+}
+
 .dashboard-view,
 .projects-view,
 .performance-view,
@@ -1493,6 +1727,9 @@ svg {
   .project-board,
   .performance-grid,
   .kpi-grid,
+  .dashboard-kpi-grid,
+  .dashboard-metrics-grid,
+  .kanban-board,
   .dashboard-grid,
   .summary-grid {
     grid-template-columns: 1fr 1fr;
@@ -1545,6 +1782,9 @@ svg {
   .project-board,
   .performance-grid,
   .kpi-grid,
+  .dashboard-kpi-grid,
+  .dashboard-metrics-grid,
+  .kanban-board,
   .dashboard-grid,
   .summary-grid,
   .form-grid,
