@@ -8,6 +8,8 @@ import com.taskmanager.api.application.usecase.FindTaskUseCase;
 import com.taskmanager.api.application.usecase.KanbanColumn;
 import com.taskmanager.api.application.usecase.KanbanTasksUseCase;
 import com.taskmanager.api.application.usecase.ListTasksUseCase;
+import com.taskmanager.api.application.usecase.TaskDashboard;
+import com.taskmanager.api.application.usecase.TaskDashboardUseCase;
 import com.taskmanager.api.application.usecase.UpdateTaskUseCase;
 import com.taskmanager.api.domain.model.Task;
 import com.taskmanager.api.domain.model.TaskPriority;
@@ -26,6 +28,7 @@ public class TaskService {
     private final FindTaskUseCase findTaskUseCase;
     private final ListTasksUseCase listTasksUseCase;
     private final KanbanTasksUseCase kanbanTasksUseCase;
+    private final TaskDashboardUseCase taskDashboardUseCase;
 
     public TaskService(
             CreateTaskUseCase createTaskUseCase,
@@ -33,7 +36,8 @@ public class TaskService {
             DeleteTaskUseCase deleteTaskUseCase,
             FindTaskUseCase findTaskUseCase,
             ListTasksUseCase listTasksUseCase,
-            KanbanTasksUseCase kanbanTasksUseCase
+            KanbanTasksUseCase kanbanTasksUseCase,
+            TaskDashboardUseCase taskDashboardUseCase
     ) {
         this.createTaskUseCase = createTaskUseCase;
         this.updateTaskUseCase = updateTaskUseCase;
@@ -41,6 +45,7 @@ public class TaskService {
         this.findTaskUseCase = findTaskUseCase;
         this.listTasksUseCase = listTasksUseCase;
         this.kanbanTasksUseCase = kanbanTasksUseCase;
+        this.taskDashboardUseCase = taskDashboardUseCase;
     }
 
     public Page<Task> findAll(Pageable pageable) {
@@ -69,5 +74,9 @@ public class TaskService {
 
     public List<KanbanColumn> getKanbanBoard() {
         return kanbanTasksUseCase.getBoard();
+    }
+
+    public TaskDashboard getDashboard() {
+        return taskDashboardUseCase.getDashboard();
     }
 }

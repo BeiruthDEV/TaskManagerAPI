@@ -11,6 +11,7 @@ O MVP atual cobre o modulo de tarefas:
 - excluir tarefa;
 - filtrar por status e prioridade;
 - consultar tarefas agrupadas por status para Kanban real via API;
+- consultar indicadores basicos de dashboard via API;
 - visualizar tarefas em tabela no frontend;
 - buscar tarefas localmente no frontend;
 - exibir resumo por status;
@@ -41,7 +42,7 @@ Para uma primeira versao realmente vendavel do Trackio, o MVP desejado deve incl
 - lista de tarefas;
 - Kanban;
 - filtros e busca;
-- dashboard basico;
+- tela dashboard basica;
 - perfis de acesso: administrador, gestor e funcionario.
 
 ## Versao futura
@@ -79,9 +80,9 @@ Ainda nao estao implementados:
 - multiempresa;
 - projetos reais;
 - tela Kanban funcional no frontend;
-- dashboard real;
+- tela dashboard funcional no frontend;
 - comentarios;
 - anexos;
 - deploy publico.
 
-Observacao: o Kanban real ja existe como endpoint de API. Ainda nao ha tela Kanban funcional no frontend.
+Observacao: Kanban e dashboard ja existem como endpoints de API. Ainda nao ha telas funcionais de Kanban e dashboard no frontend.

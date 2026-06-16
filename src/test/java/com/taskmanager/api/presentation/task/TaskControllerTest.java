@@ -22,6 +22,7 @@ import com.taskmanager.api.application.TaskService;
 import com.taskmanager.api.application.command.CreateTaskCommand;
 import com.taskmanager.api.application.command.UpdateTaskCommand;
 import com.taskmanager.api.application.usecase.KanbanColumn;
+import com.taskmanager.api.application.usecase.TaskDashboard;
 import com.taskmanager.api.domain.exception.TaskNotFoundException;
 import com.taskmanager.api.domain.model.Task;
 import com.taskmanager.api.domain.model.TaskPriority;
@@ -31,6 +32,7 @@ import com.taskmanager.api.presentation.task.dto.TaskCreateDTO;
 import com.taskmanager.api.presentation.task.dto.TaskUpdateDTO;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Map;
 import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -206,6 +208,41 @@ class TaskControllerTest {
                 .andExpect(jsonPath("$.columns[2].status").value("EM_REVISAO"))
                 .andExpect(jsonPath("$.columns[2].total").value(0))
                 .andExpect(jsonPath("$.columns[3].status").value("CONCLUIDO"));
+    }
+
+    @Test
+    void shouldReturnTaskDashboardIndicators() throws Exception {
+        given(taskService.getDashboard()).willReturn(new TaskDashboard(
+                4,
+                Map.of(
+                        TaskStatus.PENDENTE, 1L,
+                        TaskStatus.EM_PROGRESSO, 1L,
+                        TaskStatus.EM_REVISAO, 0L,
+                        TaskStatus.CONCLUIDO, 2L
+                ),
+                Map.of(
+                        TaskPriority.BAIXA, 1L,
+                        TaskPriority.MEDIA, 2L,
+                        TaskPriority.ALTA, 1L
+                ),
+                1,
+                2,
+                50.0
+        ));
+
+        mockMvc.perform(get("/api/tasks/dashboard"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.totalTasks").value(4))
+                .andExpect(jsonPath("$.tasksByStatus.PENDENTE").value(1))
+                .andExpect(jsonPath("$.tasksByStatus.EM_PROGRESSO").value(1))
+                .andExpect(jsonPath("$.tasksByStatus.EM_REVISAO").value(0))
+                .andExpect(jsonPath("$.tasksByStatus.CONCLUIDO").value(2))
+                .andExpect(jsonPath("$.tasksByPriority.BAIXA").value(1))
+                .andExpect(jsonPath("$.tasksByPriority.MEDIA").value(2))
+                .andExpect(jsonPath("$.tasksByPriority.ALTA").value(1))
+                .andExpect(jsonPath("$.overdueTasks").value(1))
+                .andExpect(jsonPath("$.completedTasks").value(2))
+                .andExpect(jsonPath("$.completionRate").value(50.0));
     }
 
     @Test

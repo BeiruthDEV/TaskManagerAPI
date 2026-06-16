@@ -16,6 +16,8 @@ import com.taskmanager.api.application.usecase.FindTaskUseCase;
 import com.taskmanager.api.application.usecase.KanbanColumn;
 import com.taskmanager.api.application.usecase.KanbanTasksUseCase;
 import com.taskmanager.api.application.usecase.ListTasksUseCase;
+import com.taskmanager.api.application.usecase.TaskDashboard;
+import com.taskmanager.api.application.usecase.TaskDashboardUseCase;
 import com.taskmanager.api.application.usecase.UpdateTaskUseCase;
 import com.taskmanager.api.domain.exception.TaskNotFoundException;
 import com.taskmanager.api.domain.model.Task;
@@ -54,7 +56,8 @@ class TaskServiceTest {
                 new DeleteTaskUseCase(taskRepository),
                 new FindTaskUseCase(taskRepository),
                 new ListTasksUseCase(taskRepository),
-                new KanbanTasksUseCase(taskRepository)
+                new KanbanTasksUseCase(taskRepository),
+                new TaskDashboardUseCase(taskRepository)
         );
     }
 
@@ -180,5 +183,21 @@ class TaskServiceTest {
         assertThat(board).hasSize(TaskStatus.values().length);
         assertThat(board.get(0).tasks()).containsExactly(pending);
         assertThat(board.get(3).tasks()).containsExactly(done);
+    }
+
+    @Test
+    void shouldReturnTaskDashboardIndicators() {
+        Task pending = new Task("Pendente", null, null, null, null,
+                TaskStatus.PENDENTE, TaskPriority.ALTA, LocalDate.now().minusDays(1));
+        Task done = new Task("Concluida", null, null, null, null,
+                TaskStatus.CONCLUIDO, TaskPriority.MEDIA, LocalDate.now());
+        when(taskRepository.findAll()).thenReturn(List.of(pending, done));
+
+        TaskDashboard dashboard = taskService.getDashboard();
+
+        assertThat(dashboard.totalTasks()).isEqualTo(2);
+        assertThat(dashboard.overdueTasks()).isEqualTo(1);
+        assertThat(dashboard.completedTasks()).isEqualTo(1);
+        assertThat(dashboard.completionRate()).isEqualTo(50.0);
     }
 }

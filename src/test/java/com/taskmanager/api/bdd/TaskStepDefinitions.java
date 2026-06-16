@@ -13,6 +13,7 @@ import com.taskmanager.api.application.usecase.DeleteTaskUseCase;
 import com.taskmanager.api.application.usecase.FindTaskUseCase;
 import com.taskmanager.api.application.usecase.KanbanTasksUseCase;
 import com.taskmanager.api.application.usecase.ListTasksUseCase;
+import com.taskmanager.api.application.usecase.TaskDashboardUseCase;
 import com.taskmanager.api.application.usecase.UpdateTaskUseCase;
 import com.taskmanager.api.domain.exception.TaskNotFoundException;
 import com.taskmanager.api.domain.model.Task;
@@ -52,7 +53,8 @@ public class TaskStepDefinitions {
                 new DeleteTaskUseCase(taskRepository),
                 new FindTaskUseCase(taskRepository),
                 new ListTasksUseCase(taskRepository),
-                new KanbanTasksUseCase(taskRepository)
+                new KanbanTasksUseCase(taskRepository),
+                new TaskDashboardUseCase(taskRepository)
         );
         existingTaskId = null;
         createdTask = null;

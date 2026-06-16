@@ -5,6 +5,7 @@ import com.taskmanager.api.domain.model.Task;
 import com.taskmanager.api.domain.model.TaskPriority;
 import com.taskmanager.api.domain.model.TaskStatus;
 import com.taskmanager.api.presentation.task.dto.TaskCreateDTO;
+import com.taskmanager.api.presentation.task.dto.TaskDashboardResponseDTO;
 import com.taskmanager.api.presentation.task.dto.TaskKanbanResponseDTO;
 import com.taskmanager.api.presentation.task.dto.TaskResponseDTO;
 import com.taskmanager.api.presentation.task.dto.TaskUpdateDTO;
@@ -52,6 +53,13 @@ public class TaskController {
     @ApiResponse(responseCode = "200", description = "Quadro Kanban retornado com sucesso")
     public TaskKanbanResponseDTO getKanbanBoard() {
         return TaskKanbanResponseDTO.fromApplication(taskService.getKanbanBoard());
+    }
+
+    @GetMapping("/dashboard")
+    @Operation(summary = "Exibir dashboard", description = "Retorna indicadores agregados do modulo de tarefas")
+    @ApiResponse(responseCode = "200", description = "Dashboard retornado com sucesso")
+    public TaskDashboardResponseDTO getDashboard() {
+        return TaskDashboardResponseDTO.fromApplication(taskService.getDashboard());
     }
 
     @GetMapping("/{id}")

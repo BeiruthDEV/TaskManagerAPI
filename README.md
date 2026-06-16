@@ -24,6 +24,7 @@ O projeto hoje possui:
 - Criacao, edicao e exclusao de tarefas pela interface.
 - Sidebar com modulos ativos e secao de roadmap.
 - Endpoint real de Kanban para tarefas agrupadas por status.
+- Endpoint real de dashboard com indicadores basicos de tarefas.
 - Documentacao academica em `docs/`.
 - Testes unitarios, teste de repository e cenarios BDD.
 - Dockerfile e docker-compose.yml para execucao da API em container.
@@ -36,7 +37,7 @@ O projeto ainda nao possui:
 - equipes/departamentos;
 - projetos como modulo proprio;
 - tela Kanban funcional;
-- dashboard funcional;
+- tela dashboard funcional;
 - comentarios, anexos e historico;
 - microsservicos executaveis separados;
 - deploy publicado em servidor/cloud.
@@ -52,6 +53,7 @@ Modulo Tasks:
 - excluir tarefa;
 - filtrar tarefas por status e prioridade;
 - consultar Kanban real agrupado por status;
+- consultar dashboard basico com indicadores reais;
 - campos: titulo, descricao, responsavel, projeto, progresso, status, prioridade e prazo;
 - tratamento global de erros;
 - validacao de payloads;
@@ -67,7 +69,7 @@ Frontend atual:
 - estados de loading, erro, vazio e sucesso;
 - roadmap visual para modulos futuros, sem simular funcionalidades inexistentes.
 
-Observacao: o Kanban real existe na API, mas a interface principal ainda permanece focada na tabela de tarefas.
+Observacao: Kanban e dashboard ja existem como endpoints de API, mas a interface principal ainda permanece focada na tabela de tarefas.
 
 ## Funcionalidades planejadas
 
@@ -203,6 +205,7 @@ docker compose down -v
 | `DELETE` | `/api/tasks/{id}` | Remove uma tarefa |
 | `GET` | `/api/tasks/filter?status=PENDENTE&priority=ALTA` | Filtra tarefas |
 | `GET` | `/api/tasks/kanban` | Retorna tarefas agrupadas por status para Kanban |
+| `GET` | `/api/tasks/dashboard` | Retorna indicadores basicos de tarefas |
 
 ## Swagger/OpenAPI
 

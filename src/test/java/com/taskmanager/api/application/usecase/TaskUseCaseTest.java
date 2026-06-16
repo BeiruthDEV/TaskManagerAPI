@@ -41,6 +41,7 @@ class TaskUseCaseTest {
     private FindTaskUseCase findTaskUseCase;
     private ListTasksUseCase listTasksUseCase;
     private KanbanTasksUseCase kanbanTasksUseCase;
+    private TaskDashboardUseCase taskDashboardUseCase;
 
     @BeforeEach
     void setUp() {
@@ -50,6 +51,7 @@ class TaskUseCaseTest {
         findTaskUseCase = new FindTaskUseCase(taskRepository);
         listTasksUseCase = new ListTasksUseCase(taskRepository);
         kanbanTasksUseCase = new KanbanTasksUseCase(taskRepository);
+        taskDashboardUseCase = new TaskDashboardUseCase(taskRepository);
     }
 
     @Test
@@ -245,5 +247,30 @@ class TaskUseCaseTest {
         assertThat(board.get(2).tasks()).containsExactly(review);
         assertThat(board.get(3).status()).isEqualTo(TaskStatus.CONCLUIDO);
         assertThat(board.get(3).tasks()).isEmpty();
+    }
+
+    @Test
+    void shouldCalculateTaskDashboardIndicators() {
+        Task pendingOverdue = new Task("Atrasada", null, null, null, null,
+                TaskStatus.PENDENTE, TaskPriority.ALTA, LocalDate.now().minusDays(1));
+        Task inProgress = new Task("Andamento", null, null, null, null,
+                TaskStatus.EM_PROGRESSO, TaskPriority.MEDIA, LocalDate.now().plusDays(2));
+        Task completed = new Task("Concluida", null, null, null, null,
+                TaskStatus.CONCLUIDO, TaskPriority.BAIXA, LocalDate.now().minusDays(3));
+        when(taskRepository.findAll()).thenReturn(List.of(pendingOverdue, inProgress, completed));
+
+        TaskDashboard dashboard = taskDashboardUseCase.getDashboard();
+
+        assertThat(dashboard.totalTasks()).isEqualTo(3);
+        assertThat(dashboard.tasksByStatus().get(TaskStatus.PENDENTE)).isEqualTo(1);
+        assertThat(dashboard.tasksByStatus().get(TaskStatus.EM_PROGRESSO)).isEqualTo(1);
+        assertThat(dashboard.tasksByStatus().get(TaskStatus.EM_REVISAO)).isZero();
+        assertThat(dashboard.tasksByStatus().get(TaskStatus.CONCLUIDO)).isEqualTo(1);
+        assertThat(dashboard.tasksByPriority().get(TaskPriority.ALTA)).isEqualTo(1);
+        assertThat(dashboard.tasksByPriority().get(TaskPriority.MEDIA)).isEqualTo(1);
+        assertThat(dashboard.tasksByPriority().get(TaskPriority.BAIXA)).isEqualTo(1);
+        assertThat(dashboard.overdueTasks()).isEqualTo(1);
+        assertThat(dashboard.completedTasks()).isEqualTo(1);
+        assertThat(dashboard.completionRate()).isEqualTo(33.33);
     }
 }
