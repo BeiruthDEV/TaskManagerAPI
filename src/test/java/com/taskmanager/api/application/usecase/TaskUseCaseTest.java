@@ -40,6 +40,7 @@ class TaskUseCaseTest {
     private DeleteTaskUseCase deleteTaskUseCase;
     private FindTaskUseCase findTaskUseCase;
     private ListTasksUseCase listTasksUseCase;
+    private KanbanTasksUseCase kanbanTasksUseCase;
 
     @BeforeEach
     void setUp() {
@@ -48,6 +49,7 @@ class TaskUseCaseTest {
         deleteTaskUseCase = new DeleteTaskUseCase(taskRepository);
         findTaskUseCase = new FindTaskUseCase(taskRepository);
         listTasksUseCase = new ListTasksUseCase(taskRepository);
+        kanbanTasksUseCase = new KanbanTasksUseCase(taskRepository);
     }
 
     @Test
@@ -220,5 +222,28 @@ class TaskUseCaseTest {
         List<Task> result = listTasksUseCase.filter(null, null);
 
         assertThat(result).containsExactly(task);
+    }
+
+    @Test
+    void shouldGroupTasksByStatusForKanbanBoard() {
+        Task pending = new Task("Pendente", null, null, null, null,
+                TaskStatus.PENDENTE, TaskPriority.ALTA, null);
+        Task inProgress = new Task("Em progresso", null, null, null, null,
+                TaskStatus.EM_PROGRESSO, TaskPriority.MEDIA, null);
+        Task review = new Task("Revisao", null, null, null, null,
+                TaskStatus.EM_REVISAO, TaskPriority.BAIXA, null);
+        when(taskRepository.findAll()).thenReturn(List.of(pending, inProgress, review));
+
+        List<KanbanColumn> board = kanbanTasksUseCase.getBoard();
+
+        assertThat(board).hasSize(TaskStatus.values().length);
+        assertThat(board.get(0).status()).isEqualTo(TaskStatus.PENDENTE);
+        assertThat(board.get(0).tasks()).containsExactly(pending);
+        assertThat(board.get(1).status()).isEqualTo(TaskStatus.EM_PROGRESSO);
+        assertThat(board.get(1).tasks()).containsExactly(inProgress);
+        assertThat(board.get(2).status()).isEqualTo(TaskStatus.EM_REVISAO);
+        assertThat(board.get(2).tasks()).containsExactly(review);
+        assertThat(board.get(3).status()).isEqualTo(TaskStatus.CONCLUIDO);
+        assertThat(board.get(3).tasks()).isEmpty();
     }
 }

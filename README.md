@@ -23,6 +23,7 @@ O projeto hoje possui:
 - Listagem real de tarefas via `/api/tasks`.
 - Criacao, edicao e exclusao de tarefas pela interface.
 - Sidebar com modulos ativos e secao de roadmap.
+- Endpoint real de Kanban para tarefas agrupadas por status.
 - Documentacao academica em `docs/`.
 - Testes unitarios, teste de repository e cenarios BDD.
 - Dockerfile e docker-compose.yml para execucao da API em container.
@@ -34,7 +35,7 @@ O projeto ainda nao possui:
 - organizacoes/empresas;
 - equipes/departamentos;
 - projetos como modulo proprio;
-- Kanban funcional;
+- tela Kanban funcional;
 - dashboard funcional;
 - comentarios, anexos e historico;
 - microsservicos executaveis separados;
@@ -50,6 +51,7 @@ Modulo Tasks:
 - atualizar tarefa;
 - excluir tarefa;
 - filtrar tarefas por status e prioridade;
+- consultar Kanban real agrupado por status;
 - campos: titulo, descricao, responsavel, projeto, progresso, status, prioridade e prazo;
 - tratamento global de erros;
 - validacao de payloads;
@@ -65,6 +67,8 @@ Frontend atual:
 - estados de loading, erro, vazio e sucesso;
 - roadmap visual para modulos futuros, sem simular funcionalidades inexistentes.
 
+Observacao: o Kanban real existe na API, mas a interface principal ainda permanece focada na tabela de tarefas.
+
 ## Funcionalidades planejadas
 
 - autenticacao e autorizacao;
@@ -72,7 +76,7 @@ Frontend atual:
 - funcionarios/membros;
 - equipes/departamentos;
 - projetos;
-- Kanban;
+- tela Kanban;
 - dashboard;
 - comentarios;
 - anexos;
@@ -150,6 +154,14 @@ Pre-requisitos:
 
 O Docker Compose sobe a API com o profile `docker` e um PostgreSQL persistente:
 
+Crie o arquivo local de ambiente a partir do exemplo:
+
+```powershell
+Copy-Item .env.example .env
+```
+
+Depois suba os containers:
+
 ```powershell
 docker compose down
 docker compose build
@@ -171,6 +183,8 @@ user: trackio
 password: trackio
 ```
 
+Esses valores podem ser ajustados no arquivo `.env`.
+
 O volume `taskmanager-postgres-data` preserva os dados entre reinicios dos containers. Para remover tambem os dados persistidos:
 
 ```powershell
@@ -188,6 +202,7 @@ docker compose down -v
 | `PUT` | `/api/tasks/{id}` | Atualiza uma tarefa |
 | `DELETE` | `/api/tasks/{id}` | Remove uma tarefa |
 | `GET` | `/api/tasks/filter?status=PENDENTE&priority=ALTA` | Filtra tarefas |
+| `GET` | `/api/tasks/kanban` | Retorna tarefas agrupadas por status para Kanban |
 
 ## Swagger/OpenAPI
 
@@ -218,8 +233,8 @@ Estado real:
 - testes de service/facade: existentes;
 - testes de dominio: existentes;
 - teste de repository JPA: existente;
+- testes de controller/API HTTP com MockMvc: existentes;
 - BDD com Cucumber: existente;
-- testes de controller/API HTTP: ainda pendentes;
 - testes automatizados do frontend: ainda pendentes.
 
 ## Status academico
@@ -232,9 +247,9 @@ Estado real:
 | TDD | Parcialmente atendido por testes unitarios existentes |
 | BDD | Atendido no fluxo basico de tarefas com Cucumber |
 | Arquitetura Limpa | Parcialmente atendida pela estrutura em camadas |
-| Microsservicos | Documentado como proposta futura; nao ha servicos separados executaveis |
+| Microsservicos | Proposta arquitetural documentada; nao ha servicos separados executaveis |
 | Docker | Atendido com Dockerfile, Compose, PostgreSQL e volume persistente |
-| Deploy | Pendente |
+| Deploy | Pendente; sera feito na fase final |
 | Justificativas tecnicas | Documentadas em `docs/` |
 
 ## Documentacao principal

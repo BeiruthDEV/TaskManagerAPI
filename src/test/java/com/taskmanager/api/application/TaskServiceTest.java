@@ -13,6 +13,8 @@ import com.taskmanager.api.application.port.TaskRepository;
 import com.taskmanager.api.application.usecase.CreateTaskUseCase;
 import com.taskmanager.api.application.usecase.DeleteTaskUseCase;
 import com.taskmanager.api.application.usecase.FindTaskUseCase;
+import com.taskmanager.api.application.usecase.KanbanColumn;
+import com.taskmanager.api.application.usecase.KanbanTasksUseCase;
 import com.taskmanager.api.application.usecase.ListTasksUseCase;
 import com.taskmanager.api.application.usecase.UpdateTaskUseCase;
 import com.taskmanager.api.domain.exception.TaskNotFoundException;
@@ -51,7 +53,8 @@ class TaskServiceTest {
                 new UpdateTaskUseCase(taskRepository),
                 new DeleteTaskUseCase(taskRepository),
                 new FindTaskUseCase(taskRepository),
-                new ListTasksUseCase(taskRepository)
+                new ListTasksUseCase(taskRepository),
+                new KanbanTasksUseCase(taskRepository)
         );
     }
 
@@ -162,5 +165,20 @@ class TaskServiceTest {
         List<Task> result = taskService.filter(TaskStatus.PENDENTE, TaskPriority.ALTA);
 
         assertThat(result).containsExactly(task);
+    }
+
+    @Test
+    void shouldReturnKanbanBoardGroupedByStatus() {
+        Task pending = new Task("Pendente", null, null, null, null,
+                TaskStatus.PENDENTE, TaskPriority.ALTA, null);
+        Task done = new Task("Concluida", null, null, null, null,
+                TaskStatus.CONCLUIDO, TaskPriority.MEDIA, null);
+        when(taskRepository.findAll()).thenReturn(List.of(pending, done));
+
+        List<KanbanColumn> board = taskService.getKanbanBoard();
+
+        assertThat(board).hasSize(TaskStatus.values().length);
+        assertThat(board.get(0).tasks()).containsExactly(pending);
+        assertThat(board.get(3).tasks()).containsExactly(done);
     }
 }

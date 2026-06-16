@@ -5,6 +5,7 @@ import com.taskmanager.api.domain.model.Task;
 import com.taskmanager.api.domain.model.TaskPriority;
 import com.taskmanager.api.domain.model.TaskStatus;
 import com.taskmanager.api.presentation.task.dto.TaskCreateDTO;
+import com.taskmanager.api.presentation.task.dto.TaskKanbanResponseDTO;
 import com.taskmanager.api.presentation.task.dto.TaskResponseDTO;
 import com.taskmanager.api.presentation.task.dto.TaskUpdateDTO;
 import io.swagger.v3.oas.annotations.Operation;
@@ -44,6 +45,13 @@ public class TaskController {
     @ApiResponse(responseCode = "200", description = "Tarefas listadas com sucesso")
     public Page<TaskResponseDTO> findAll(@PageableDefault(page = 0, size = 10) Pageable pageable) {
         return taskService.findAll(pageable).map(TaskResponseDTO::fromDomain);
+    }
+
+    @GetMapping("/kanban")
+    @Operation(summary = "Listar Kanban", description = "Retorna tarefas agrupadas por status para visualizacao Kanban")
+    @ApiResponse(responseCode = "200", description = "Quadro Kanban retornado com sucesso")
+    public TaskKanbanResponseDTO getKanbanBoard() {
+        return TaskKanbanResponseDTO.fromApplication(taskService.getKanbanBoard());
     }
 
     @GetMapping("/{id}")

@@ -10,6 +10,7 @@ O MVP atual cobre o modulo de tarefas:
 - atualizar tarefa;
 - excluir tarefa;
 - filtrar por status e prioridade;
+- consultar tarefas agrupadas por status para Kanban real via API;
 - visualizar tarefas em tabela no frontend;
 - buscar tarefas localmente no frontend;
 - exibir resumo por status;
@@ -77,8 +78,10 @@ Ainda nao estao implementados:
 - autenticacao;
 - multiempresa;
 - projetos reais;
-- Kanban real;
+- tela Kanban funcional no frontend;
 - dashboard real;
 - comentarios;
 - anexos;
 - deploy publico.
+
+Observacao: o Kanban real ja existe como endpoint de API. Ainda nao ha tela Kanban funcional no frontend.

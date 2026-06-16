@@ -21,6 +21,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.taskmanager.api.application.TaskService;
 import com.taskmanager.api.application.command.CreateTaskCommand;
 import com.taskmanager.api.application.command.UpdateTaskCommand;
+import com.taskmanager.api.application.usecase.KanbanColumn;
 import com.taskmanager.api.domain.exception.TaskNotFoundException;
 import com.taskmanager.api.domain.model.Task;
 import com.taskmanager.api.domain.model.TaskPriority;
@@ -179,6 +180,32 @@ class TaskControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.number").value(1))
                 .andExpect(jsonPath("$.size").value(5));
+    }
+
+    @Test
+    void shouldReturnKanbanBoardGroupedByStatus() throws Exception {
+        Task pending = buildTask(1L, "Pendente", TaskStatus.PENDENTE, TaskPriority.ALTA);
+        Task inProgress = buildTask(2L, "Em progresso", TaskStatus.EM_PROGRESSO, TaskPriority.MEDIA);
+        given(taskService.getKanbanBoard()).willReturn(List.of(
+                new KanbanColumn(TaskStatus.PENDENTE, List.of(pending)),
+                new KanbanColumn(TaskStatus.EM_PROGRESSO, List.of(inProgress)),
+                new KanbanColumn(TaskStatus.EM_REVISAO, List.of()),
+                new KanbanColumn(TaskStatus.CONCLUIDO, List.of())
+        ));
+
+        mockMvc.perform(get("/api/tasks/kanban"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.totalTasks").value(2))
+                .andExpect(jsonPath("$.columns.length()").value(4))
+                .andExpect(jsonPath("$.columns[0].status").value("PENDENTE"))
+                .andExpect(jsonPath("$.columns[0].title").value("Pendente"))
+                .andExpect(jsonPath("$.columns[0].total").value(1))
+                .andExpect(jsonPath("$.columns[0].tasks[0].id").value(1))
+                .andExpect(jsonPath("$.columns[1].status").value("EM_PROGRESSO"))
+                .andExpect(jsonPath("$.columns[1].tasks[0].id").value(2))
+                .andExpect(jsonPath("$.columns[2].status").value("EM_REVISAO"))
+                .andExpect(jsonPath("$.columns[2].total").value(0))
+                .andExpect(jsonPath("$.columns[3].status").value("CONCLUIDO"));
     }
 
     @Test
