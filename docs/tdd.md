@@ -9,6 +9,7 @@ O projeto possui testes automatizados para:
 - use cases: `TaskUseCaseTest`;
 - facade/service: `TaskServiceTest`;
 - repository JPA: `TaskRepositoryTest`;
+- controller/API HTTP: `TaskControllerTest`;
 - contexto Spring: `TaskManagerApiApplicationTests`;
 - BDD: `CucumberTest` e `TaskStepDefinitions`.
 
@@ -25,6 +26,9 @@ Os testes atuais validam:
 - listagem paginada;
 - filtro por status e prioridade;
 - persistencia JPA;
+- contratos HTTP principais do controller de tarefas;
+- validacoes HTTP para payloads invalidos;
+- respostas 404 para tarefas inexistentes;
 - preenchimento de campos de auditoria.
 
 ## Relacao com TDD
@@ -37,10 +41,7 @@ Os testes foram usados para proteger comportamento antes e durante as refatoraco
 
 ## Testes que ainda faltam
 
-- testes de controller/API com `MockMvc`;
-- testes de validacao HTTP;
-- testes de payload invalido;
-- testes de erro 404 via HTTP;
 - testes de contrato do frontend com a API;
+- testes automatizados da interface;
 - testes para autenticacao;
 - testes para organizacao, usuarios, projetos, Kanban e dashboard.

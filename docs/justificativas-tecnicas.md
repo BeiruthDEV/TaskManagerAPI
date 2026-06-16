@@ -14,7 +14,11 @@ JPA reduz codigo repetitivo de persistencia e permite evoluir de H2 para Postgre
 
 ## H2 Database
 
-H2 foi escolhido para desenvolvimento e testes por simplicidade. A limitacao e que nao representa completamente um banco de producao. A evolucao recomendada e PostgreSQL.
+H2 foi escolhido para desenvolvimento local simples e testes por velocidade e baixa configuracao. A limitacao e que nao representa completamente um banco de producao.
+
+## PostgreSQL
+
+PostgreSQL foi adicionado ao Docker Compose para aproximar o ambiente containerizado de um banco real e persistente. O uso atual e local, via profile `docker`; producao deve usar o profile `prod` com variaveis fornecidas pela plataforma de deploy.
 
 ## Swagger/OpenAPI
 
@@ -22,7 +26,7 @@ Swagger facilita documentar e testar endpoints. Isso ajuda tanto na entrega acad
 
 ## Docker
 
-Docker padroniza execucao e reduz diferencas entre ambientes. O Dockerfile atual empacota a API, e o Compose simplifica a execucao local.
+Docker padroniza execucao e reduz diferencas entre ambientes. O Dockerfile atual empacota a API, e o Compose simplifica a execucao local com API, PostgreSQL, volume persistente e `.env.example`.
 
 ## Cucumber BDD
 
@@ -39,7 +43,7 @@ O frontend estatico foi escolhido para entregar uma interface simples e direta s
 ## Limitacoes assumidas
 
 - sem autenticacao por enquanto;
-- sem banco de producao;
 - sem deploy publico;
 - sem microsservicos executaveis;
+- sem migrations versionadas;
 - frontend sem testes automatizados.
