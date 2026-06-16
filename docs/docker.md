@@ -6,6 +6,7 @@ O projeto possui:
 
 - `Dockerfile`;
 - `docker-compose.yml`.
+- `.env.example`.
 
 ## Dockerfile atual
 
@@ -49,6 +50,8 @@ user: trackio
 password: trackio
 ```
 
+Esses valores sao definidos por variaveis de ambiente e podem ser alterados no arquivo `.env`.
+
 ## Persistencia
 
 O PostgreSQL usa o volume nomeado:
@@ -60,6 +63,14 @@ taskmanager-postgres-data
 Esse volume preserva os dados entre reinicios dos containers.
 
 ## Como executar
+
+Criar o arquivo local de ambiente:
+
+```powershell
+Copy-Item .env.example .env
+```
+
+Subir os containers:
 
 ```powershell
 docker compose down
@@ -111,9 +122,14 @@ Mantem H2 em memoria para execucao de testes automatizados.
 
 ### `docker`
 
-Usado pelo Docker Compose. Configura PostgreSQL via variaveis:
+Usado pelo Docker Compose. Configura PostgreSQL via `.env`:
 
 ```text
+APP_PORT=8081
+POSTGRES_HOST_PORT=5432
+POSTGRES_DB=trackio
+POSTGRES_USER=trackio
+POSTGRES_PASSWORD=trackio
 SPRING_PROFILES_ACTIVE=docker
 SPRING_DATASOURCE_URL=jdbc:postgresql://taskmanager-postgres:5432/trackio
 SPRING_DATASOURCE_USERNAME=trackio
@@ -135,11 +151,10 @@ SPRING_JPA_HIBERNATE_DDL_AUTO=update
 ## Limitacoes atuais
 
 - ainda nao possui migracoes de banco com Flyway ou Liquibase;
-- credenciais do Compose sao locais e didaticas;
+- credenciais do `.env.example` sao locais e didaticas;
 - profile `prod` depende de variaveis da plataforma de deploy;
 
 ## Evolucao futura
 
-- separar variaveis em `.env.example`;
 - adicionar Flyway ou Liquibase;
 - validar build e execucao em CI.

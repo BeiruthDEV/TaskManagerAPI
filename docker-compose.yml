@@ -3,15 +3,15 @@ services:
     image: postgres:16-alpine
     container_name: taskmanager-postgres
     environment:
-      POSTGRES_DB: trackio
-      POSTGRES_USER: trackio
-      POSTGRES_PASSWORD: trackio
+      POSTGRES_DB: ${POSTGRES_DB:-trackio}
+      POSTGRES_USER: ${POSTGRES_USER:-trackio}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-trackio}
     ports:
-      - "5432:5432"
+      - "${POSTGRES_HOST_PORT:-5432}:5432"
     volumes:
       - taskmanager-postgres-data:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U trackio -d trackio"]
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-trackio} -d ${POSTGRES_DB:-trackio}"]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -23,12 +23,12 @@ services:
       dockerfile: Dockerfile
     container_name: taskmanager-api
     environment:
-      SPRING_PROFILES_ACTIVE: docker
-      SPRING_DATASOURCE_URL: jdbc:postgresql://taskmanager-postgres:5432/trackio
-      SPRING_DATASOURCE_USERNAME: trackio
-      SPRING_DATASOURCE_PASSWORD: trackio
+      SPRING_PROFILES_ACTIVE: ${SPRING_PROFILES_ACTIVE:-docker}
+      SPRING_DATASOURCE_URL: ${SPRING_DATASOURCE_URL:-jdbc:postgresql://taskmanager-postgres:5432/trackio}
+      SPRING_DATASOURCE_USERNAME: ${SPRING_DATASOURCE_USERNAME:-trackio}
+      SPRING_DATASOURCE_PASSWORD: ${SPRING_DATASOURCE_PASSWORD:-trackio}
     ports:
-      - "8081:8080"
+      - "${APP_PORT:-8081}:8080"
     depends_on:
       taskmanager-postgres:
         condition: service_healthy
