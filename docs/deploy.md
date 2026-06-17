@@ -2,85 +2,94 @@
 
 ## Estado atual
 
-O deploy publico ainda nao foi realizado. O projeto possui Dockerfile, Docker Compose, profile `docker` com PostgreSQL local e profile `prod` preparado para PostgreSQL externo, mas ainda nao ha URL publicada em servidor ou plataforma cloud.
+O deploy publico foi realizado na Railway em **17/06/2026**.
 
-O deploy sera executado na fase final da entrega, depois da revisao documental e da validacao local com testes e Docker Compose.
-
-Link publico atual:
+A aplicacao esta publicada e acessivel em:
 
 ```text
-Pendente
+https://taskmanagerapi-production-b8b0.up.railway.app/
 ```
 
-## Plataformas sugeridas
+## Plataforma usada
 
-Opcoes possiveis:
+- Plataforma: Railway
+- Aplicacao: Trackio / TaskManagerAPI
+- Tipo: API Spring Boot servindo backend REST e frontend estatico
 
-- Render;
-- Railway;
-- Fly.io;
-- VPS;
-- Azure;
-- AWS;
-- Google Cloud.
+## Endpoints validados
 
-Para a entrega academica, Render ou Railway tendem a ser opcoes simples para publicar a API rapidamente.
+Foram validados os seguintes endpoints no ambiente publicado:
 
-## Plano de deploy
+| Endpoint | Resultado |
+|---|---|
+| `/` | HTTP 200 |
+| `/api/tasks` | HTTP 200 |
+| `/api/tasks/dashboard` | HTTP 200 |
+| `/api/tasks/kanban` | HTTP 200 |
+| `/swagger-ui.html` | HTTP 200 |
+| `/v3/api-docs` | HTTP 200 |
 
-1. Escolher plataforma para a fase final.
-2. Configurar build do projeto.
-3. Definir `SPRING_PROFILES_ACTIVE=prod`.
-4. Configurar banco PostgreSQL persistente.
-5. Publicar backend.
-6. Validar `/`, `/api/tasks` e Swagger.
-7. Registrar link publico no README e neste documento.
+## Dados de demonstracao
 
-## Variaveis esperadas
+O ambiente publicado usa dados ficticios da **Atlas Solucoes Empresariais** para demonstracao. Esses dados permitem visualizar a interface com tarefas, responsaveis, projetos, prazos, prioridades, status e indicadores como se o sistema estivesse em uso por uma empresa real.
 
-- `SPRING_PROFILES_ACTIVE`;
-- `SPRING_DATASOURCE_URL`;
-- `SPRING_DATASOURCE_USERNAME`;
-- `SPRING_DATASOURCE_PASSWORD`;
-- `SPRING_JPA_HIBERNATE_DDL_AUTO`;
-- segredo JWT, quando autenticacao existir.
+Esses dados nao representam clientes reais. Em uma instalacao real, os dados seriam cadastrados pelos usuarios da empresa contratante.
 
-Exemplo para ambiente de producao:
+## Comandos de validacao usados
 
-```text
-SPRING_PROFILES_ACTIVE=prod
-SPRING_DATASOURCE_URL=jdbc:postgresql://host:5432/trackio
-SPRING_DATASOURCE_USERNAME=usuario
-SPRING_DATASOURCE_PASSWORD=senha
-SPRING_JPA_HIBERNATE_DDL_AUTO=update
-```
-
-## Comandos uteis antes do deploy
-
-Validar testes:
+Validacao local:
 
 ```powershell
 .\mvnw.cmd test
+node --check src/main/resources/static/app.js
+node --check src/main/resources/static/task-api.js
 ```
 
-Validar Compose local:
+Validacao do ambiente publicado:
 
 ```powershell
-docker compose config
-docker compose up -d --build
+$base='https://taskmanagerapi-production-b8b0.up.railway.app'
+$paths=@('/','/api/tasks','/api/tasks/dashboard','/api/tasks/kanban','/swagger-ui.html','/v3/api-docs')
+foreach($path in $paths){
+  $r=Invoke-WebRequest -Uri ($base+$path) -Method GET -UseBasicParsing -TimeoutSec 30
+  "$($r.StatusCode) $path"
+}
 ```
 
-## Evidencias necessarias para entrega
+Resultado observado:
 
-- link publico ativo;
-- print ou log de deploy;
-- comandos de build/start;
-- endpoints testados;
-- observacao sobre limitacoes do ambiente publicado.
+```text
+200 /
+200 /api/tasks
+200 /api/tasks/dashboard
+200 /api/tasks/kanban
+200 /swagger-ui.html
+200 /v3/api-docs
+```
 
-## O que nao deve ser afirmado ainda
+## Variaveis esperadas
 
-- Nao afirmar que o sistema ja esta publicado.
-- Nao informar link ficticio.
-- Nao afirmar que o ambiente de producao ja foi validado.
-- Nao afirmar que ha infraestrutura cloud ativa antes da fase final de deploy.
+O profile de producao deve receber variaveis de ambiente pela plataforma:
+
+```text
+SPRING_PROFILES_ACTIVE=prod
+SPRING_DATASOURCE_URL=...
+SPRING_DATASOURCE_USERNAME=...
+SPRING_DATASOURCE_PASSWORD=...
+SPRING_JPA_HIBERNATE_DDL_AUTO=update
+```
+
+## Evidencias para entrega
+
+- URL publica ativa: `https://taskmanagerapi-production-b8b0.up.railway.app/`
+- Plataforma: Railway
+- Endpoints principais validados com HTTP 200
+- Swagger/OpenAPI disponivel em `/swagger-ui.html` e `/v3/api-docs`
+- Dados demo ficticios documentados em `docs/dados-demo.md`
+
+## Limitacoes do ambiente publicado
+
+- Ainda nao ha autenticacao.
+- Ainda nao ha modulos reais de organizacao, funcionarios, equipes e projetos.
+- Ainda nao ha microsservicos executaveis separados.
+- Ainda nao ha migrations com Flyway/Liquibase.

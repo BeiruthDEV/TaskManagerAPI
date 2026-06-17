@@ -4,7 +4,7 @@ Este checklist reflete o estado real do repositorio nesta fase. A classificacao 
 
 - **Atendido**: requisito implementado ou documentado diretamente no projeto.
 - **Atendido com justificativa**: requisito demonstrado com limite tecnico assumido e defendido na documentacao.
-- **Pendente**: ainda nao existe nesta versao ou depende da fase de deploy.
+- **Pendente**: ainda nao existe nesta versao ou depende de evolucao futura.
 
 ## Atendido
 
@@ -35,6 +35,10 @@ Este checklist reflete o estado real do repositorio nesta fase. A classificacao 
 - [x] Profiles `dev`, `test`, `docker` e `prod`.
 - [x] `.env.example` para execucao local com Docker.
 - [x] Documentacao academica em `docs/`.
+- [x] Deploy publico realizado na Railway.
+- [x] Link de acesso publicado: `https://taskmanagerapi-production-b8b0.up.railway.app/`.
+- [x] Endpoints publicados validados: `/`, `/api/tasks`, `/api/tasks/dashboard`, `/api/tasks/kanban`, `/swagger-ui.html`, `/v3/api-docs`.
+- [x] Relatorio de deploy documentado em `docs/relatorio-fase-deploy.md`.
 
 ## Atendido com justificativa
 
@@ -48,9 +52,6 @@ Este checklist reflete o estado real do repositorio nesta fase. A classificacao 
 
 ## Pendente
 
-- [ ] Deploy publico em servidor ou plataforma cloud.
-- [ ] Link de acesso publicado.
-- [ ] Evidencias do deploy: URL, prints/logs e endpoints validados.
 - [ ] Flyway ou Liquibase para migrations.
 - [ ] Configuracao segura de credenciais fora do ambiente local.
 - [ ] Testes automatizados do frontend.
@@ -64,9 +65,7 @@ Este checklist reflete o estado real do repositorio nesta fase. A classificacao 
 
 ## Proximos passos
 
-1. Fazer deploy final com profile `prod` e PostgreSQL persistente.
-2. Registrar o link publico no README e em `docs/deploy.md`.
-3. Validar `/`, `/api/tasks` e Swagger no ambiente publicado.
-4. Adicionar evidencias de deploy para a entrega.
-5. Avaliar se a banca exige microsservicos executaveis ou se a proposta arquitetural documentada e suficiente.
-6. Planejar migrations com Flyway ou Liquibase.
+1. Apresentar a URL publica da Railway durante a entrega.
+2. Validar novamente `/`, `/api/tasks`, `/api/tasks/dashboard`, `/api/tasks/kanban`, `/swagger-ui.html` e `/v3/api-docs` antes da demonstracao.
+3. Avaliar se a banca exige microsservicos executaveis ou se a proposta arquitetural documentada e suficiente.
+4. Planejar migrations com Flyway ou Liquibase.

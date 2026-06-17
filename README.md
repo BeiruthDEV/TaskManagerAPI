@@ -2,6 +2,83 @@
 
 Trackio e um sistema em evolucao para gestao empresarial de demandas, tarefas, responsaveis, prazos e produtividade. O repositorio atual contem uma API REST em Java/Spring Boot, uma interface web estatica para o modulo de tarefas e documentacao academica para demonstrar Clean Code, SOLID, Design Patterns, TDD, BDD, Arquitetura Limpa, Docker, microsservicos planejados e deploy.
 
+## Link do sistema publicado
+
+Aplicacao publicada na Railway:
+
+```text
+https://taskmanagerapi-production-b8b0.up.railway.app/
+```
+
+Endpoints publicos principais:
+
+- Interface web: https://taskmanagerapi-production-b8b0.up.railway.app/
+- API de tarefas: https://taskmanagerapi-production-b8b0.up.railway.app/api/tasks
+- Dashboard: https://taskmanagerapi-production-b8b0.up.railway.app/api/tasks/dashboard
+- Kanban: https://taskmanagerapi-production-b8b0.up.railway.app/api/tasks/kanban
+- Swagger UI: https://taskmanagerapi-production-b8b0.up.railway.app/swagger-ui.html
+- OpenAPI JSON: https://taskmanagerapi-production-b8b0.up.railway.app/v3/api-docs
+
+## Evidencias dos criterios de avaliacao
+
+| Criterio | Pontuacao | Status | Evidencias no projeto |
+|---|---:|---|---|
+| Descricao do problema e proposta da solucao | 0,8 | Atendido | `README.md`; `docs/proposta.md`; `docs/proposta-sistema-gestao-demandas.md`; `docs/requisitos.md` |
+| Aplicacao de Clean Code | 0,8 | Atendido | `docs/clean-code.md`; DTOs em `src/main/java/.../presentation/task/dto`; use cases em `src/main/java/.../application/usecase`; `TaskJpaMapper`; `GlobalExceptionHandler` |
+| Uso correto dos principios SOLID | 1,0 | Atendido | `docs/solid.md`; `TaskRepository` como porta; use cases pequenos; `TaskRepositoryAdapter`; injecao por construtor |
+| Aplicacao adequada de Design Patterns | 0,8 | Atendido | `docs/design-patterns.md`; Repository, Adapter, Mapper, Factory, Facade/Service, DTO, DI e Global Exception Handler |
+| Arquitetura Limpa e organizacao das camadas | 1,0 | Atendido | `docs/arquitetura.md`; pacotes `domain`, `application`, `infrastructure`, `presentation`; ports/adapters; `PageQuery`/`PageResult` na application |
+| Divisao adequada em microsservicos | 0,8 | Atendido com justificativa | `docs/microsservicos.md`; bounded contexts Auth, Organization, Task, Report e Notification; monolito modular preparado para extracao futura |
+| Uso de TDD e testes unitarios | 0,8 | Atendido | `docs/tdd.md`; `src/test`; 55 testes automatizados; testes de dominio, factory, use cases, service, repository e controller |
+| Uso de BDD e cenarios de comportamento | 0,8 | Atendido | `docs/bdd.md`; `src/test/resources/features/tasks.feature`; `CucumberTest`; `TaskStepDefinitions` |
+| Docker/Docker Compose | 0,5 | Atendido | `docs/docker.md`; `Dockerfile`; `docker-compose.yml`; `.env.example` |
+| Deploy ativo em servidor/cloud | 0,5 | Atendido | Railway: https://taskmanagerapi-production-b8b0.up.railway.app/; `docs/deploy.md`; `docs/relatorio-fase-deploy.md` |
+| Clareza da explicacao e justificativas tecnicas | 0,2 | Atendido | `docs/justificativas-tecnicas.md`; `docs/checklist-entrega.md`; `docs/dados-demo.md`; README com evidencias e links |
+
+## Observacao sobre microsservicos
+
+A implementacao atual e um **monolito modular**. Nao ha microsservicos executaveis separados nesta versao.
+
+A divisao em microsservicos foi documentada como proposta arquitetural em `docs/microsservicos.md`. Os bounded contexts planejados sao:
+
+- Auth;
+- Organization;
+- Task;
+- Report;
+- Notification.
+
+Essa escolha evita complexidade prematura de rede, deploy independente, observabilidade distribuida e consistencia eventual em um projeto academico de escopo controlado. O codigo foi organizado em camadas e ports/adapters para permitir extracao futura quando houver necessidade real ou exigencia especifica.
+
+## Dados de demonstracao
+
+A empresa **Atlas Solucoes Empresariais** e ficticia. Os dados de tarefas, responsaveis, projetos, prazos, status, prioridades e indicadores sao mockados/semeados para demonstracao.
+
+O objetivo e permitir que o professor visualize o sistema como se uma empresa real estivesse usando a aplicacao, sem depender de uma tela vazia ou de cadastro manual durante a apresentacao.
+
+Documento completo: `docs/dados-demo.md`.
+
+## Como validar
+
+Validacao local:
+
+```powershell
+.\mvnw.cmd test
+node --check src/main/resources/static/app.js
+node --check src/main/resources/static/task-api.js
+docker compose config
+```
+
+Validacao publica rapida:
+
+```powershell
+$base='https://taskmanagerapi-production-b8b0.up.railway.app'
+$paths=@('/','/api/tasks','/api/tasks/dashboard','/api/tasks/kanban','/swagger-ui.html','/v3/api-docs')
+foreach($path in $paths){
+  $r=Invoke-WebRequest -Uri ($base+$path) -Method GET -UseBasicParsing -TimeoutSec 30
+  "$($r.StatusCode) $path"
+}
+```
+
 ## Problema escolhido
 
 Muitas empresas ainda controlam demandas por planilhas, WhatsApp, e-mails soltos, anotacoes manuais ou quadros Trello sem padronizacao. Isso dificulta a visao de responsaveis, prazos, prioridades, status e produtividade.
@@ -37,8 +114,7 @@ O projeto ainda nao possui:
 - equipes/departamentos;
 - projetos como modulo proprio;
 - comentarios, anexos e historico;
-- microsservicos executaveis separados;
-- deploy publicado em servidor/cloud.
+- microsservicos executaveis separados.
 
 ## Funcionalidades implementadas
 
@@ -85,8 +161,28 @@ Observacao: Kanban e dashboard ja existem como endpoints e tambem possuem telas 
 - historico de atividades;
 - notificacoes;
 - relatorios;
-- deploy em cloud;
 - evolucao para microsservicos quando fizer sentido.
+
+## Deploy publico
+
+A aplicacao esta publicada e acessivel na Railway.
+
+```text
+https://taskmanagerapi-production-b8b0.up.railway.app/
+```
+
+Deploy realizado em 17/06/2026.
+
+Endpoints publicos validados:
+
+- `/`
+- `/api/tasks`
+- `/api/tasks/dashboard`
+- `/api/tasks/kanban`
+- `/swagger-ui.html`
+- `/v3/api-docs`
+
+O ambiente publicado usa dados ficticios da **Atlas Solucoes Empresariais** para demonstracao. Esses dados nao representam clientes reais.
 
 ## Arquitetura atual
 
@@ -229,6 +325,12 @@ No Docker Compose:
 http://localhost:8081/swagger-ui.html
 ```
 
+Ambiente publicado:
+
+```text
+https://taskmanagerapi-production-b8b0.up.railway.app/swagger-ui.html
+```
+
 ## Testes
 
 Executar:
@@ -260,7 +362,7 @@ Estado real:
 | Arquitetura Limpa | Atendida com justificativa: monolito modular em camadas, ports/adapters e limite pragmatico do Spring |
 | Microsservicos | Atendido como modelagem arquitetural; nao ha servicos separados executaveis nesta versao |
 | Docker | Atendido com Dockerfile, Compose, PostgreSQL e volume persistente |
-| Deploy | Pendente; sera feito na fase final |
+| Deploy | Atendido na Railway com URL publica validada |
 | Justificativas tecnicas | Documentadas em `docs/` |
 
 ## Documentacao principal
@@ -278,6 +380,7 @@ Estado real:
 - [Dados de demonstracao](docs/dados-demo.md)
 - [Docker](docs/docker.md)
 - [Deploy](docs/deploy.md)
+- [Relatorio de deploy](docs/relatorio-fase-deploy.md)
 - [Justificativas tecnicas](docs/justificativas-tecnicas.md)
 - [Roadmap](docs/roadmap.md)
 - [Checklist da entrega](docs/checklist-entrega.md)
