@@ -3,11 +3,13 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Trackio Tasks</title>
+    <title>Trackio Tarefas</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <link rel="icon" type="image/png" href="/assets/trackio-icon.png">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&family=Sora:wght@600;700;800&display=swap" rel="stylesheet">
+    <link rel="icon" type="image/png" sizes="1024x1024" href="/assets/trackio-icon.png?v=20260616">
+    <link rel="shortcut icon" type="image/png" href="/assets/trackio-icon.png?v=20260616">
+    <link rel="apple-touch-icon" href="/assets/trackio-icon.png?v=20260616">
     <link rel="stylesheet" href="/styles.css">
   </head>
   <body>
@@ -15,20 +17,20 @@
       <aside class="sidebar" aria-label="Menu lateral">
         <a class="brand" href="/">
           <span class="brand-orbit">
-            <img src="/assets/trackio-icon.png" alt="" aria-hidden="true">
+            <img src="/assets/trackio-icon.png?v=20260616" alt="" aria-hidden="true">
           </span>
           <span>Trackio</span>
         </a>
 
-        <p class="menu-title">Core</p>
+        <p class="menu-title">Principal</p>
         <nav class="side-nav" aria-label="Menu principal">
           <a href="#dashboard" class="side-link" data-main-view="dashboard">
             <i data-lucide="layout-dashboard"></i>
-            <span class="side-link-label">Dashboard</span>
+            <span class="side-link-label">Painel</span>
           </a>
           <a href="/" class="side-link active" data-main-view="tasks">
             <i data-lucide="clipboard-list"></i>
-            <span class="side-link-label">Tasks</span>
+            <span class="side-link-label">Tarefas</span>
           </a>
           <a href="#kanban" class="side-link" data-main-view="kanban">
             <i data-lucide="kanban-square"></i>
@@ -36,185 +38,299 @@
           </a>
           <button class="side-link disabled" type="button" disabled>
             <i data-lucide="folder"></i>
-            <span class="side-link-label">Projects</span>
+            <span class="side-link-label">Projetos</span>
           </button>
           <button class="side-link disabled" type="button" disabled>
             <i data-lucide="settings"></i>
-            <span class="side-link-label">Settings</span>
+            <span class="side-link-label">Configurações</span>
           </button>
         </nav>
 
-        <p class="menu-title second">Roadmap</p>
-        <nav class="side-nav roadmap-nav" aria-label="Modulos planejados">
+        <p class="menu-title second">Planejamento</p>
+        <nav class="side-nav roadmap-nav" aria-label="Módulos planejados">
           <button class="side-link roadmap-link" type="button" data-roadmap-module="calendar">
             <i data-lucide="calendar-days"></i>
-            <span class="side-link-label">Calendar</span>
+            <span class="side-link-label">Calendário</span>
             <span class="roadmap-badge">Em breve</span>
           </button>
           <button class="side-link roadmap-link" type="button" data-roadmap-module="performance">
             <i data-lucide="activity"></i>
-            <span class="side-link-label">Performance</span>
+            <span class="side-link-label">Desempenho</span>
             <span class="roadmap-badge">Em breve</span>
           </button>
           <button class="side-link roadmap-link" type="button" data-roadmap-module="employees">
             <i data-lucide="users"></i>
-            <span class="side-link-label">Employees</span>
+            <span class="side-link-label">Colaboradores</span>
             <span class="roadmap-badge">Em breve</span>
           </button>
           <button class="side-link roadmap-link" type="button" data-roadmap-module="invoices">
             <i data-lucide="receipt-text"></i>
-            <span class="side-link-label">Invoices</span>
+            <span class="side-link-label">Faturas</span>
             <span class="roadmap-badge">Em breve</span>
           </button>
           <button class="side-link roadmap-link" type="button" data-roadmap-module="payrolls">
             <i data-lucide="wallet-cards"></i>
-            <span class="side-link-label">Payrolls</span>
+            <span class="side-link-label">Folhas</span>
             <span class="roadmap-badge">Em breve</span>
           </button>
           <button class="side-link roadmap-link" type="button" data-roadmap-module="recruitment">
             <i data-lucide="user-plus"></i>
-            <span class="side-link-label">Recruitment &amp; Hiring</span>
+            <span class="side-link-label">Recrutamento</span>
             <span class="roadmap-badge">Em breve</span>
           </button>
           <button class="side-link roadmap-link" type="button" data-roadmap-module="integration">
             <i data-lucide="plug-zap"></i>
-            <span class="side-link-label">Integration</span>
+            <span class="side-link-label">Integrações</span>
             <span class="roadmap-badge">Em breve</span>
           </button>
           <button class="side-link roadmap-link" type="button" data-roadmap-module="help">
             <i data-lucide="circle-help"></i>
-            <span class="side-link-label">Help &amp; Center</span>
+            <span class="side-link-label">Ajuda</span>
             <span class="roadmap-badge">Em breve</span>
           </button>
         </nav>
+
+        <section class="organization-card" aria-label="Organização atual">
+          <div class="organization-card-head">
+            <span class="organization-mark">AS</span>
+            <div>
+              <strong>Atlas Soluções Empresariais</strong>
+              <span>Plano Demonstração</span>
+            </div>
+          </div>
+          <div class="organization-usage">
+            <span>42 de 100 usuários</span>
+            <strong>42%</strong>
+          </div>
+          <span class="organization-progress" aria-hidden="true">
+            <span style="width: 42%"></span>
+          </span>
+          <button class="organization-button" type="button">Gerenciar organização</button>
+        </section>
       </aside>
 
       <main class="app-main">
         <header class="topbar compact">
           <div class="page-title">
-            <h1 id="page-heading">Tasks</h1>
+            <h1 id="page-heading">Tarefas</h1>
             <p id="page-subtitle">Gerencie as tarefas do time</p>
           </div>
+          <button class="user-account" type="button" aria-label="Conta de Matheus Beiruth">
+            <span class="user-avatar">MB</span>
+            <span class="user-meta">
+              <strong>Matheus Beiruth</strong>
+              <span>Administrador · Atlas Soluções Empresariais</span>
+            </span>
+            <i data-lucide="chevron-down"></i>
+          </button>
         </header>
 
         <section class="content-panel" id="tasks-panel">
-          <div class="summary-grid" aria-label="Resumo das tarefas">
-            <article class="summary-card">
-              <span>Total</span>
-              <strong id="summary-total">0</strong>
-            </article>
-            <article class="summary-card">
-              <span>Pendentes</span>
-              <strong id="summary-pending">0</strong>
-            </article>
-            <article class="summary-card">
-              <span>Em andamento</span>
-              <strong id="summary-progress">0</strong>
-            </article>
-            <article class="summary-card">
-              <span>Concluidas</span>
-              <strong id="summary-completed">0</strong>
-            </article>
-          </div>
+          <div class="tasks-shell">
+            <div class="tasks-main">
+              <div class="summary-grid tasks-kpis" aria-label="Resumo gerencial das tarefas">
+                <article class="summary-card kpi-total">
+                  <span>Total de tarefas</span>
+                  <strong id="summary-total">0</strong>
+                  <small>Carteira aberta</small>
+                </article>
+                <article class="summary-card kpi-progress">
+                  <span>Em andamento</span>
+                  <strong id="summary-progress">0</strong>
+                  <small>Em execução</small>
+                </article>
+                <article class="summary-card kpi-risk">
+                  <span>Em risco</span>
+                  <strong id="summary-risk">0</strong>
+                  <small>Prioridade alta ou prazo vencido</small>
+                </article>
+                <article class="summary-card kpi-completed">
+                  <span>Concluídas</span>
+                  <strong id="summary-completed">0</strong>
+                  <small>Finalizadas</small>
+                </article>
+              </div>
 
-          <div class="task-toolbar">
-            <label class="task-search">
-              <i data-lucide="search"></i>
-              <input id="task-search" type="search" placeholder="Buscar tarefa">
-            </label>
+              <div class="task-toolbar enterprise-toolbar">
+                <label class="task-search">
+                  <i data-lucide="search"></i>
+                  <input id="task-search" type="search" placeholder="Buscar tarefa, projeto ou responsável">
+                </label>
 
-            <label class="status-select">
-              <span>Status</span>
-              <select id="status-filter">
-                <option value="">Todos</option>
-                <option value="PENDENTE">Pendentes</option>
-                <option value="EM_PROGRESSO">Em andamento</option>
-                <option value="EM_REVISAO">Em revisao</option>
-                <option value="CONCLUIDO">Concluidas</option>
-              </select>
-            </label>
+                <label class="status-select">
+                  <span>Status</span>
+                  <select id="status-filter">
+                    <option value="">Todos</option>
+                    <option value="PENDENTE">Pendentes</option>
+                    <option value="EM_PROGRESSO">Em andamento</option>
+                    <option value="EM_REVISAO">Em revisão</option>
+                    <option value="CONCLUIDO">Concluídas</option>
+                  </select>
+                </label>
 
-            <div class="spacer"></div>
+                <label class="status-select">
+                  <span>Prioridade</span>
+                  <select id="priority-filter">
+                    <option value="">Todas</option>
+                    <option value="ALTA">Alta</option>
+                    <option value="MEDIA">Média</option>
+                    <option value="BAIXA">Baixa</option>
+                  </select>
+                </label>
 
-            <button class="add-button" id="add-task-button" type="button">
-              <i data-lucide="plus"></i>
-              Nova tarefa
-            </button>
-          </div>
+                <label class="status-select">
+                  <span>Responsável</span>
+                  <select id="assignee-filter">
+                    <option value="">Todos</option>
+                  </select>
+                </label>
 
-          <div class="state-message" id="loading-state">
-            <i data-lucide="loader-circle"></i>
-            <span>Carregando tarefas...</span>
-          </div>
+                <button class="clear-button" id="clear-task-filters" type="button">Limpar</button>
 
-          <div class="state-message error hidden" id="error-state" role="alert">
-            <i data-lucide="circle-alert"></i>
-            <span id="error-message">Nao foi possivel carregar as tarefas.</span>
-            <button class="secondary-button" id="retry-button" type="button">Tentar novamente</button>
-          </div>
+                <button class="add-button" id="add-task-button" type="button">
+                  <i data-lucide="plus"></i>
+                  Nova tarefa
+                </button>
+              </div>
 
-          <div class="table-wrap hidden" id="table-wrap">
-            <table class="task-table">
-              <thead>
-                <tr>
-                  <th>Titulo</th>
-                  <th>Status</th>
-                  <th>Prioridade</th>
-                  <th>Progresso</th>
-                  <th>Acoes</th>
-                </tr>
-              </thead>
-              <tbody id="task-table-body"></tbody>
-            </table>
-          </div>
+              <div class="state-message" id="loading-state">
+                <i data-lucide="loader-circle"></i>
+                <span>Carregando tarefas...</span>
+              </div>
 
-          <div class="empty-state hidden" id="empty-state">
-            <i data-lucide="clipboard-list"></i>
-            <h2>Nenhuma tarefa encontrada</h2>
-            <p>Crie uma tarefa ou ajuste a busca e o filtro atual.</p>
-            <button class="add-button" type="button" data-empty-add>
-              <i data-lucide="plus"></i>
-              Nova tarefa
-            </button>
+              <div class="state-message error hidden" id="error-state" role="alert">
+                <i data-lucide="circle-alert"></i>
+                <span id="error-message">Não foi possível carregar as tarefas.</span>
+                <button class="secondary-button" id="retry-button" type="button">Tentar novamente</button>
+              </div>
+
+              <div class="table-wrap enterprise-table-wrap hidden" id="table-wrap">
+                <table class="task-table enterprise-task-table">
+                  <thead>
+                    <tr>
+                      <th class="check-column"><input type="checkbox" aria-label="Selecionar todas as tarefas"></th>
+                      <th>Tarefa</th>
+                      <th>Projeto</th>
+                      <th>Responsável</th>
+                      <th>Status</th>
+                      <th>Prioridade</th>
+                      <th>Prazo</th>
+                      <th>Progresso</th>
+                      <th>Ações</th>
+                    </tr>
+                  </thead>
+                  <tbody id="task-table-body"></tbody>
+                </table>
+              </div>
+
+              <div class="empty-state hidden" id="empty-state">
+                <i data-lucide="clipboard-list"></i>
+                <h2>Nenhuma tarefa encontrada</h2>
+                <p>Crie uma tarefa ou ajuste a busca e os filtros atuais.</p>
+                <button class="add-button" type="button" data-empty-add>
+                  <i data-lucide="plus"></i>
+                  Nova tarefa
+                </button>
+              </div>
+            </div>
+
+            <aside class="tasks-insights" aria-label="Insights das tarefas">
+              <section class="task-widget workload-widget">
+                <header>
+                  <div>
+                    <h2>Carga de trabalho</h2>
+                    <p>Tarefas por responsável</p>
+                  </div>
+                </header>
+                <div id="task-workload-widget"></div>
+              </section>
+
+              <section class="task-widget">
+                <header>
+                  <div>
+                    <h2>Próximos prazos</h2>
+                    <p>Tarefas com vencimento próximo</p>
+                  </div>
+                </header>
+                <div class="deadline-list" id="task-deadlines-widget"></div>
+              </section>
+
+              <section class="task-widget">
+                <header>
+                  <div>
+                    <h2>Status das tarefas</h2>
+                    <p>Resumo atual</p>
+                  </div>
+                </header>
+                <div class="task-status-list" id="task-status-widget"></div>
+              </section>
+            </aside>
           </div>
         </section>
 
         <section class="content-panel dashboard-panel hidden" id="dashboard-panel" aria-live="polite">
           <div class="state-message" id="dashboard-loading-state">
             <i data-lucide="loader-circle"></i>
-            <span>Carregando dashboard...</span>
+            <span>Carregando painel...</span>
           </div>
 
           <div class="state-message error hidden" id="dashboard-error-state" role="alert">
             <i data-lucide="circle-alert"></i>
-            <span id="dashboard-error-message">Nao foi possivel carregar o dashboard.</span>
+            <span id="dashboard-error-message">Não foi possível carregar o painel.</span>
             <button class="secondary-button" id="dashboard-retry-button" type="button">Tentar novamente</button>
           </div>
 
           <div class="dashboard-content hidden" id="dashboard-content">
+            <div class="dashboard-section-heading dashboard-section-heading-top">
+              <div>
+                <span class="section-kicker">Indicadores principais</span>
+                <h2>Leitura executiva da carteira</h2>
+              </div>
+              <p>Volume, entrega, risco e avanço do ciclo.</p>
+            </div>
+
             <div class="dashboard-kpi-grid" aria-label="Indicadores principais">
-              <article class="metric-card">
-                <span>Total</span>
+              <article class="metric-card kpi-total-card">
+                <header class="metric-card-top">
+                  <span>Total</span>
+                  <span class="metric-icon"><i data-lucide="layers-3"></i></span>
+                </header>
                 <strong id="dashboard-total">0</strong>
+                <small>Carteira monitorada</small>
               </article>
-              <article class="metric-card">
-                <span>Concluidas</span>
+              <article class="metric-card kpi-completed-card">
+                <header class="metric-card-top">
+                  <span>Concluídas</span>
+                  <span class="metric-icon"><i data-lucide="check-circle-2"></i></span>
+                </header>
                 <strong id="dashboard-completed">0</strong>
+                <small>Entregas finalizadas</small>
               </article>
-              <article class="metric-card">
-                <span>Atrasadas</span>
+              <article class="metric-card kpi-overdue-card">
+                <header class="metric-card-top">
+                  <span>Em risco</span>
+                  <span class="metric-icon"><i data-lucide="triangle-alert"></i></span>
+                </header>
                 <strong id="dashboard-overdue">0</strong>
+                <small>Prazos vencidos</small>
               </article>
-              <article class="metric-card">
-                <span>Conclusao</span>
+              <article class="metric-card kpi-rate-card">
+                <header class="metric-card-top">
+                  <span>Conclusão</span>
+                  <span class="metric-icon"><i data-lucide="gauge"></i></span>
+                </header>
                 <strong id="dashboard-rate">0%</strong>
+                <small>Avanço concluído</small>
               </article>
             </div>
 
             <div class="dashboard-metrics-grid">
               <section class="metric-section" aria-labelledby="status-distribution-title">
                 <header>
-                  <h2 id="status-distribution-title">Distribuicao por status</h2>
+                  <div class="metric-heading">
+                    <h2 id="status-distribution-title">Distribuição por status</h2>
+                    <p>Concentração atual por etapa.</p>
+                  </div>
                   <span id="status-distribution-total">0 tarefas</span>
                 </header>
                 <div class="distribution-list" id="dashboard-status-list"></div>
@@ -222,10 +338,45 @@
 
               <section class="metric-section" aria-labelledby="priority-distribution-title">
                 <header>
-                  <h2 id="priority-distribution-title">Distribuicao por prioridade</h2>
+                  <div class="metric-heading">
+                    <h2 id="priority-distribution-title">Distribuição por prioridade</h2>
+                    <p>Peso da carteira por urgência.</p>
+                  </div>
                   <span id="priority-distribution-total">0 tarefas</span>
                 </header>
                 <div class="distribution-list" id="dashboard-priority-list"></div>
+              </section>
+            </div>
+
+            <div class="dashboard-section-heading dashboard-section-heading-compact">
+              <div>
+                <span class="section-kicker">Foco operacional</span>
+                <h2>Decisões e execução</h2>
+              </div>
+              <p>Prioridades abertas e fluxo de entrega.</p>
+            </div>
+
+            <div class="dashboard-workbench">
+              <section class="metric-section focus-section" aria-labelledby="dashboard-focus-title">
+                <header>
+                  <div class="metric-heading">
+                    <h2 id="dashboard-focus-title">Fila de foco</h2>
+                    <p>Tarefas abertas ordenadas por prioridade.</p>
+                  </div>
+                  <span id="dashboard-focus-total">0 tarefas</span>
+                </header>
+                <div class="focus-list" id="dashboard-focus-list"></div>
+              </section>
+
+              <section class="metric-section rhythm-section" aria-labelledby="dashboard-rhythm-title">
+                <header>
+                  <div class="metric-heading">
+                    <h2 id="dashboard-rhythm-title">Mapa de execução</h2>
+                    <p>Fluxo entre parada, produção, revisão e conclusão.</p>
+                  </div>
+                  <span id="dashboard-rhythm-total">0%</span>
+                </header>
+                <div class="rhythm-list" id="dashboard-rhythm-list"></div>
               </section>
             </div>
           </div>
@@ -239,7 +390,7 @@
 
           <div class="state-message error hidden" id="kanban-error-state" role="alert">
             <i data-lucide="circle-alert"></i>
-            <span id="kanban-error-message">Nao foi possivel carregar o Kanban.</span>
+            <span id="kanban-error-message">Não foi possível carregar o Kanban.</span>
             <button class="secondary-button" id="kanban-retry-button" type="button">Tentar novamente</button>
           </div>
 
@@ -251,11 +402,11 @@
         <section class="content-panel roadmap-panel hidden" id="roadmap-panel" aria-live="polite">
           <div class="module-placeholder">
             <span class="module-status" id="roadmap-status">Em breve</span>
-            <h2 id="roadmap-title">Modulo em desenvolvimento</h2>
-            <p id="roadmap-description">Este modulo esta planejado para uma versao futura do Trackio.</p>
+            <h2 id="roadmap-title">Módulo em desenvolvimento</h2>
+            <p id="roadmap-description">Este módulo está planejado para uma versão futura do Trackio.</p>
             <div class="module-notice">
               <i data-lucide="construction"></i>
-              <span id="roadmap-notice">Ainda nao disponivel nesta versao.</span>
+              <span id="roadmap-notice">Ainda não disponível nesta versão.</span>
             </div>
           </div>
         </section>
@@ -265,9 +416,10 @@
     <dialog class="task-dialog" id="task-dialog">
       <form id="task-form" method="dialog">
         <div class="dialog-head">
-          <div>
+          <div class="dialog-title-block">
             <span id="dialog-kicker">Nova tarefa</span>
-            <h2 id="dialog-title">Detalhes da tarefa</h2>
+            <h2 id="dialog-title">Abrir tarefa</h2>
+            <p id="dialog-subtitle">Registre uma nova demanda com responsável, projeto e prazo claros.</p>
           </div>
           <button class="icon-button" id="close-dialog" type="button" aria-label="Fechar">
             <i data-lucide="x"></i>
@@ -276,55 +428,81 @@
 
         <input type="hidden" id="task-id">
 
-        <label>
-          <span>Titulo</span>
-          <input id="task-title" type="text" maxlength="255" required>
-        </label>
+        <div class="dialog-body">
+          <section class="form-section">
+            <div class="form-section-head">
+              <span>Informações principais</span>
+              <p>Defina o trabalho que será acompanhado pelo time.</p>
+            </div>
+            <label class="field-control field-wide">
+              <span>Título da tarefa</span>
+              <input id="task-title" type="text" maxlength="255" placeholder="Ex.: Revisar proposta comercial" required>
+            </label>
 
-        <label>
-          <span>Descricao</span>
-          <textarea id="task-description" maxlength="2000" rows="3"></textarea>
-        </label>
+            <label class="field-control field-wide">
+              <span>Descrição</span>
+              <textarea id="task-description" maxlength="2000" rows="3" placeholder="Inclua contexto, critérios de aceite ou observações relevantes."></textarea>
+            </label>
+          </section>
 
-        <div class="form-grid">
-          <label>
-            <span>Responsavel</span>
-            <input id="task-assignee" type="text" maxlength="120">
-          </label>
-          <label>
-            <span>Projeto</span>
-            <input id="task-project" type="text" maxlength="160">
-          </label>
+          <section class="form-section">
+            <div class="form-section-head">
+              <span>Contexto</span>
+              <p>Conecte a tarefa a uma pessoa e a um projeto.</p>
+            </div>
+            <div class="form-grid">
+              <label class="field-control">
+                <span>Responsável</span>
+                <input id="task-assignee" type="text" maxlength="120" placeholder="Nome do responsável">
+              </label>
+              <label class="field-control">
+                <span>Projeto</span>
+                <input id="task-project" type="text" maxlength="160" placeholder="Projeto relacionado">
+              </label>
+            </div>
+          </section>
+
+          <section class="form-section">
+            <div class="form-section-head">
+              <span>Controle</span>
+              <p>Ajuste status, prioridade e prazo de entrega.</p>
+            </div>
+            <div class="form-grid three">
+              <label class="field-control">
+                <span>Status</span>
+                <select id="task-status">
+                  <option value="PENDENTE">Pendente</option>
+                  <option value="EM_PROGRESSO">Em andamento</option>
+                  <option value="EM_REVISAO">Em revisão</option>
+                  <option value="CONCLUIDO">Concluída</option>
+                </select>
+              </label>
+              <label class="field-control">
+                <span>Prioridade</span>
+                <select id="task-priority">
+                  <option value="BAIXA">Baixa</option>
+                  <option value="MEDIA">Média</option>
+                  <option value="ALTA">Alta</option>
+                </select>
+              </label>
+              <label class="field-control">
+                <span>Prazo</span>
+                <input id="task-due-date" type="date">
+              </label>
+            </div>
+          </section>
+
+          <section class="form-section progress-section">
+            <div class="progress-section-head">
+              <div>
+                <span>Progresso da tarefa</span>
+                <p>Atualize o percentual conforme a etapa real de execução.</p>
+              </div>
+              <output id="progress-output">0%</output>
+            </div>
+            <input id="task-progress" type="range" min="0" max="100" step="1" value="0">
+          </section>
         </div>
-
-        <div class="form-grid three">
-          <label>
-            <span>Status</span>
-            <select id="task-status">
-              <option value="PENDENTE">Pendente</option>
-              <option value="EM_PROGRESSO">Em andamento</option>
-              <option value="EM_REVISAO">Em revisao</option>
-              <option value="CONCLUIDO">Concluida</option>
-            </select>
-          </label>
-          <label>
-            <span>Prioridade</span>
-            <select id="task-priority">
-              <option value="BAIXA">Baixa</option>
-              <option value="MEDIA">Media</option>
-              <option value="ALTA">Alta</option>
-            </select>
-          </label>
-          <label>
-            <span>Prazo</span>
-            <input id="task-due-date" type="date">
-          </label>
-        </div>
-
-        <label>
-          <span>Progresso <output id="progress-output">0%</output></span>
-          <input id="task-progress" type="range" min="0" max="100" step="1" value="0">
-        </label>
 
         <p class="form-error" id="form-error" role="alert"></p>
 
@@ -333,7 +511,7 @@
             <i data-lucide="trash-2"></i>
             Excluir
           </button>
-          <span></span>
+          <span class="dialog-action-spacer"></span>
           <button class="secondary-button" id="cancel-dialog" type="button">Cancelar</button>
           <button class="add-button" type="submit">
             <i data-lucide="save"></i>
