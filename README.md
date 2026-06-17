@@ -12,14 +12,31 @@ https://taskmanagerapi-production-b8b0.up.railway.app/
 
 Endpoints publicos principais:
 
-- Interface web: https://taskmanagerapi-production-b8b0.up.railway.app/
-- API de tarefas: https://taskmanagerapi-production-b8b0.up.railway.app/api/tasks
+- Frontend: https://taskmanagerapi-production-b8b0.up.railway.app/
+- API tarefas: https://taskmanagerapi-production-b8b0.up.railway.app/api/tasks
 - Dashboard: https://taskmanagerapi-production-b8b0.up.railway.app/api/tasks/dashboard
 - Kanban: https://taskmanagerapi-production-b8b0.up.railway.app/api/tasks/kanban
-- Swagger UI: https://taskmanagerapi-production-b8b0.up.railway.app/swagger-ui.html
-- OpenAPI JSON: https://taskmanagerapi-production-b8b0.up.railway.app/v3/api-docs
+- Swagger: https://taskmanagerapi-production-b8b0.up.railway.app/swagger-ui.html
+- OpenAPI: https://taskmanagerapi-production-b8b0.up.railway.app/v3/api-docs
 
-## Evidencias dos criterios de avaliacao
+## Itens obrigatorios da entrega
+
+| Item exigido | Status | Evidencia |
+|---|---|---|
+| Descricao do problema escolhido | Atendido | `README.md`; `docs/proposta.md`; `docs/proposta-sistema-gestao-demandas.md` |
+| Divisao da solucao em microsservicos | Atendido com justificativa | `docs/microsservicos.md`; bounded contexts Auth, Organization, Task, Report e Notification |
+| Organizacao do projeto utilizando Arquitetura Limpa | Atendido | `docs/arquitetura.md`; pacotes `domain`, `application`, `infrastructure`, `presentation`; ports/adapters |
+| Aplicacao dos principios SOLID | Atendido | `docs/solid.md`; use cases pequenos; porta `TaskRepository`; `TaskRepositoryAdapter`; DI por construtor |
+| Aplicacao de Design Patterns adequados ao contexto da solucao, no minimo 4 | Atendido | `docs/design-patterns.md`; Repository, Adapter, Mapper, Factory, Facade/Service, DTO, Dependency Injection, Global Exception Handler |
+| Evidencias de Clean Code | Atendido | `docs/clean-code.md`; DTOs; use cases; mapper; exception handler; validacoes; nomes claros |
+| Testes criados com TDD | Atendido | `docs/tdd.md`; `src/test`; 55 testes automatizados; testes de dominio, use cases, service, repository e controller |
+| Cenarios de comportamento usando BDD | Atendido | `docs/bdd.md`; `src/test/resources/features/tasks.feature`; Cucumber |
+| Configuracao com Docker ou Docker Compose | Atendido | `Dockerfile`; `docker-compose.yml`; `.env.example`; `docs/docker.md` |
+| Sistema publicado e ativo em servidor/plataforma cloud | Atendido | Railway: https://taskmanagerapi-production-b8b0.up.railway.app/; `docs/deploy.md`; `docs/relatorio-fase-deploy.md` |
+| Link de acesso ao sistema publicado | Atendido | https://taskmanagerapi-production-b8b0.up.railway.app/ |
+| Justificativa tecnica das escolhas realizadas | Atendido | `docs/justificativas-tecnicas.md`; `docs/checklist-entrega.md`; `docs/dados-demo.md` |
+
+## Criterios de avaliacao
 
 | Criterio | Pontuacao | Status | Evidencias no projeto |
 |---|---:|---|---|
@@ -57,7 +74,7 @@ O objetivo e permitir que o professor visualize o sistema como se uma empresa re
 
 Documento completo: `docs/dados-demo.md`.
 
-## Como validar
+## Como validar localmente
 
 Validacao local:
 
@@ -66,6 +83,7 @@ Validacao local:
 node --check src/main/resources/static/app.js
 node --check src/main/resources/static/task-api.js
 docker compose config
+docker compose up -d --build
 ```
 
 Validacao publica rapida:
