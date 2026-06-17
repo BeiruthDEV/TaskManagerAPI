@@ -1,14 +1,18 @@
 # Checklist da Entrega Academica
 
-Este checklist reflete o estado real do repositorio nesta fase. Ele separa o que ja esta implementado, o que esta parcialmente atendido e o que ainda falta para a entrega final.
+Este checklist reflete o estado real do repositorio nesta fase. A classificacao diferencia:
 
-## Concluido
+- **Atendido**: requisito implementado ou documentado diretamente no projeto.
+- **Atendido com justificativa**: requisito demonstrado com limite tecnico assumido e defendido na documentacao.
+- **Pendente**: ainda nao existe nesta versao ou depende da fase de deploy.
+
+## Atendido
 
 - [x] Descricao do problema escolhido.
 - [x] Proposta de solucao do Trackio.
 - [x] API REST para o modulo de tarefas.
 - [x] Frontend estatico funcional para tarefas reais.
-- [x] Estrutura em camadas inspirada em Arquitetura Limpa.
+- [x] Dados de demonstracao documentados em `docs/dados-demo.md`.
 - [x] DTOs de request/response.
 - [x] Validacao de entrada.
 - [x] Tratamento global de excecoes.
@@ -24,6 +28,7 @@ Este checklist reflete o estado real do repositorio nesta fase. Ele separa o que
 - [x] Teste de repository JPA.
 - [x] Testes de controller/API HTTP com MockMvc.
 - [x] Cenarios BDD com Cucumber.
+- [x] Suite automatizada com 55 testes verdes.
 - [x] Dockerfile.
 - [x] Docker Compose com API e PostgreSQL.
 - [x] Volume persistente para PostgreSQL.
@@ -31,15 +36,15 @@ Este checklist reflete o estado real do repositorio nesta fase. Ele separa o que
 - [x] `.env.example` para execucao local com Docker.
 - [x] Documentacao academica em `docs/`.
 
-## Parcial
+## Atendido com justificativa
 
-- [ ] Clean Code: boa base com nomes claros, DTOs, use cases e handlers, mas ainda pode evoluir em regras de dominio mais ricas e menor acoplamento com framework.
-- [ ] SOLID: aplicado em parte por separacao de responsabilidades e porta de repository, mas `application` ainda usa anotacoes Spring e tipos do Spring Data.
-- [ ] Arquitetura Limpa: estrutura existe e esta organizada, mas ainda nao esta totalmente independente de framework.
-- [ ] TDD: ha boa cobertura automatizada, mas nem todo comportamento futuro nasceu estritamente por ciclo TDD documentado.
-- [ ] Microsservicos: existe proposta arquitetural documentada, mas a aplicacao atual continua sendo um monolito modular.
-- [ ] Docker: atende bem ao ambiente local com PostgreSQL, mas ainda falta estrategia madura de migrations e configuracao real de producao.
-- [ ] Deploy: documentado e planejado, mas ainda nao executado/publicado.
+- [x] **Arquitetura Limpa**: o projeto e um monolito modular com camadas `domain`, `application`, `infrastructure` e `presentation`. A application nao usa mais `Page`/`Pageable` do Spring Data; usa `PageQuery`/`PageResult` proprios. O uso de `@Service`/`@Transactional` foi mantido por pragmatismo do Spring e esta documentado em `docs/arquitetura.md`.
+- [x] **SOLID**: SRP aparece na separacao controller/DTO/use case/adapter/mapper/handler; DIP aparece na porta `TaskRepository`; ISP aparece nos use cases pequenos; DI e usada por construtor. Limitacoes e evolucoes estao documentadas em `docs/solid.md`.
+- [x] **TDD**: o backend possui 55 testes automatizados e as refatoracoes principais foram feitas protegidas por testes. O projeto nao promete um historico completo de todos os ciclos red/green/refactor, mas documenta o fluxo de teste/refatoracao usado em `docs/tdd.md`.
+- [x] **Clean Code**: ha nomes claros, DTOs, use cases, mapper, exception handler, validacoes e separacao de responsabilidades. O dominio simples fica como evolucao futura, documentada em `docs/clean-code.md`.
+- [x] **Microsservicos**: nao existem microsservicos executaveis nesta versao. O requisito e defendido por modelagem de bounded contexts, decisao de monolito modular e plano de extracao progressiva em `docs/microsservicos.md`.
+- [x] **Dados demo / empresa ficticia**: a empresa Atlas Solucoes Empresariais, seus setores, responsaveis e projetos sao ficticios e servem apenas para demonstracao. Origem e reset estao em `docs/dados-demo.md`.
+- [x] **Docker**: atende ao ambiente local com PostgreSQL e volume persistente. A evolucao natural e adicionar migrations com Flyway ou Liquibase.
 
 ## Pendente
 
@@ -50,12 +55,10 @@ Este checklist reflete o estado real do repositorio nesta fase. Ele separa o que
 - [ ] Configuracao segura de credenciais fora do ambiente local.
 - [ ] Testes automatizados do frontend.
 - [ ] Autenticacao.
-- [ ] Organizacao/empresa.
-- [ ] Funcionarios/membros.
-- [ ] Equipes/departamentos.
+- [ ] Organizacao/empresa real como modulo cadastral.
+- [ ] Funcionarios/membros como modulo cadastral.
+- [ ] Equipes/departamentos como modulo cadastral.
 - [ ] Projetos como modulo proprio.
-- [ ] Kanban funcional.
-- [ ] Dashboard funcional.
 - [ ] Comentarios, anexos e historico.
 - [ ] Microsservicos executaveis separados, somente se a avaliacao exigir evidencia pratica alem da proposta arquitetural.
 

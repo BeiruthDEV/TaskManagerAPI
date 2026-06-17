@@ -1,62 +1,77 @@
 # Microsservicos
 
-## Estado atual
+## Estado atual e limite
 
-O Trackio ainda nao possui microsservicos executaveis separados. O estado atual e um monolito modular em Spring Boot, organizado em camadas inspiradas em Arquitetura Limpa.
+O Trackio **nao possui microsservicos executaveis separados** nesta entrega. O sistema e um **monolito modular** Spring Boot organizado em camadas inspiradas em Arquitetura Limpa (`domain`, `application`, `infrastructure`, `presentation`).
 
-Essa decisao e intencional: antes de dividir em servicos separados, o projeto precisa estabilizar dominio, testes, contratos, Docker, deploy e banco de producao.
+Essa decisao e intencional e justificada para a entrega academica:
 
-Portanto, este documento deve ser lido como uma proposta arquitetural de divisao futura, nao como evidencia de servicos separados rodando no Docker Compose atual.
+1. Antes de dividir em servicos separados, e necessario estabilizar dominio, testes, contratos, Docker, deploy e banco de producao.
+2. Microsservicos prematuros adicionam complexidade operacional: rede, observabilidade, consistencia eventual, versionamento de contratos e deploy independente.
+3. A estrutura modular atual ja antecipa a divisao: cada bounded context pode ser extraido sem reescrita total.
 
-## Proposta de divisao futura
+Portanto, este documento e uma **proposta arquitetural fundamentada de divisao futura**, e nao evidencia de servicos rodando.
 
-Uma divisao futura coerente para o Trackio seria:
+Na defesa academica, a frase correta e: "a solucao foi dividida conceitualmente em bounded contexts e preparada para extracao progressiva, mas a implementacao entregue permanece como monolito modular por decisao tecnica".
 
-| Servico | Responsabilidade |
-|---|---|
-| Auth Service | login, autenticacao, tokens, roles e permissoes |
-| Organization Service | empresas, funcionarios, membros, equipes e departamentos |
-| Task Service | tarefas, status, prioridade, prazo, progresso, comentarios e anexos |
-| Report Service | dashboard, produtividade, indicadores e relatorios |
-| Notification Service | alertas, notificacoes internas e e-mails |
+## Bounded contexts identificados
 
-Essa divisao atende ao requisito academico como modelagem e justificativa tecnica. Caso a avaliacao exija execucao real de microsservicos, sera necessario criar servicos separados em uma fase propria.
+A analise do dominio Trackio revela cinco contextos com responsabilidades coesas e baixo acoplamento:
+
+| Servico | Responsabilidade | Dados que possui | Eventos que publica |
+|---|---|---|---|
+| **Auth Service** | login, registro, tokens JWT, roles, permissoes, refresh | usuarios, credenciais, sessoes | `UserAuthenticated`, `UserCreated`, `RoleChanged` |
+| **Organization Service** | empresas, funcionarios, membros, equipes, departamentos, hierarquia | organizations, members, teams | `MemberAdded`, `TeamCreated`, `OrgUpdated` |
+| **Task Service** | tarefas, status, prioridade, prazo, progresso, comentarios, anexos, historico | tasks, comments, attachments, activity_log | `TaskCreated`, `TaskCompleted`, `TaskOverdue`, `TaskAssigned` |
+| **Report Service** | dashboard, produtividade, indicadores agregados, relatorios | snapshots agregados, materialized views | `ReportGenerated` |
+| **Notification Service** | alertas in-app, e-mail, push, preferencias | notifications, channels, preferences | `NotificationDelivered`, `NotificationRead` |
 
 ## Justificativa da divisao
 
-Auth Service isola seguranca e credenciais.
+**Auth Service** isola seguranca e credenciais, que exigem auditoria, patch independente e politica de retencao propria.
 
-Organization Service concentra dados estruturais da empresa.
+**Organization Service** concentra dados estruturais da empresa: hierarquia, papeis, equipes e departamentos.
 
-Task Service fica responsavel pelo modulo operacional principal.
+**Task Service** e o modulo operacional principal, recebe maior carga de escrita e e o candidato mais provavel a precisar de escala independente.
 
-Report Service pode consultar dados consolidados e gerar indicadores sem sobrecarregar o fluxo transacional.
+**Report Service** consulta dados consolidados e gera indicadores sem sobrecarregar o fluxo transacional.
 
-Notification Service permite evoluir notificacoes de forma independente.
+**Notification Service** evolui notificacoes de forma independente, com filas, templates, rate limiting e canais diferentes.
 
-## Relacao com o monolito atual
+## Comunicacao proposta
 
-A separacao atual em `domain`, `application`, `infrastructure` e `presentation` ajuda uma futura extracao porque:
+- **Sincrona (REST)** para consultas entre contextos quando latencia importa, por exemplo `Task Service` consultando responsaveis no `Organization Service`.
+- **Assincrona (events)** para reacoes desacopladas, por exemplo `TaskCompleted` atualizando relatorios e gerando notificacoes.
+- **API Gateway** unico na entrada com roteamento por prefixo (`/auth`, `/orgs`, `/tasks`, `/reports`, `/notifications`).
 
-- regras de aplicacao ja estao separadas em use cases;
-- persistencia ja passa por uma porta;
-- controllers ja ficam em camada de presentation;
-- DTOs separam contrato HTTP do dominio.
+## Como o monolito atual prepara a extracao
 
-## O que nao deve ser afirmado
+A separacao em `domain`, `application`, `infrastructure` e `presentation` ajuda extracao futura porque:
 
-Nao se deve afirmar que o projeto ja tem microsservicos em producao. O correto e afirmar que:
+- regras de aplicacao ja estao em use cases independentes;
+- persistencia ja passa por uma porta (`TaskRepository`);
+- controllers ficam em presentation;
+- DTOs separam contrato HTTP do dominio;
+- paginacao usa tipos proprios (`PageQuery`/`PageResult`), sem amarrar use cases a Spring Data;
+- adapter JPA pode ser substituido por adapter HTTP cliente quando um servico for extraido.
 
-- existe uma modelagem de microsservicos;
-- a implementacao atual e monolitica modular;
-- a divisao em servicos e uma evolucao planejada;
-- o Docker Compose atual sobe API e PostgreSQL, nao varios microsservicos de negocio;
+Essa preparacao evita uma extracao artificial. Em vez de criar varios projetos pequenos sem necessidade real, o Trackio primeiro estabiliza regras, testes, contratos HTTP, Docker e persistencia. A separacao fisica pode ser feita quando houver motivo tecnico: escala independente, times separados, SLA diferente, necessidade de isolamento de dados ou exigencia academica explicita.
+
+## Limite explicito desta entrega
+
+Esta documentacao nao deve ser lida como afirmacao de que o projeto ja tem microsservicos. O correto e afirmar que:
+
+- existe uma modelagem detalhada de microsservicos com bounded contexts, comunicacao e dados;
+- a implementacao atual e monolito modular preparado para extracao;
+- a divisao em servicos e uma evolucao planejada e justificada;
+- o Docker Compose atual sobe API + PostgreSQL, nao varios microsservicos de negocio;
 - a extracao deve ocorrer apenas quando houver necessidade real ou exigencia academica especifica.
 
-## Proximos passos
+## Proximos passos para uma futura fase
 
-- documentar contratos entre servicos;
-- identificar bounded contexts;
-- separar primeiro um esqueleto minimo se a avaliacao exigir evidencia executavel;
-- adicionar banco por servico somente em uma fase madura;
-- considerar API Gateway apenas quando houver mais de um servico real.
+1. Documentar contratos OpenAPI por servico.
+2. Validar bounded contexts com Event Storming.
+3. Extrair primeiro o Notification Service, por ser naturalmente assincrono.
+4. Adicionar banco por servico somente em fase madura.
+5. Introduzir API Gateway apenas quando houver mais de um servico real em producao.
+6. Adicionar observabilidade distribuida antes de extrair o segundo servico.

@@ -36,8 +36,6 @@ O projeto ainda nao possui:
 - organizacoes/empresas;
 - equipes/departamentos;
 - projetos como modulo proprio;
-- tela Kanban funcional;
-- tela dashboard funcional;
 - comentarios, anexos e historico;
 - microsservicos executaveis separados;
 - deploy publicado em servidor/cloud.
@@ -62,6 +60,8 @@ Modulo Tasks:
 Frontend atual:
 
 - tela principal de tarefas;
+- tela dashboard com indicadores da API;
+- tela Kanban alimentada pelo endpoint de tarefas agrupadas por status;
 - cards de resumo;
 - busca local;
 - filtro por status;
@@ -69,7 +69,7 @@ Frontend atual:
 - estados de loading, erro, vazio e sucesso;
 - roadmap visual para modulos futuros, sem simular funcionalidades inexistentes.
 
-Observacao: Kanban e dashboard ja existem como endpoints de API, mas a interface principal ainda permanece focada na tabela de tarefas.
+Observacao: Kanban e dashboard ja existem como endpoints e tambem possuem telas no frontend. O escopo ainda continua concentrado no modulo de tarefas; projetos, equipes, usuarios e organizacoes permanecem como modulos futuros.
 
 ## Funcionalidades planejadas
 
@@ -78,8 +78,8 @@ Observacao: Kanban e dashboard ja existem como endpoints de API, mas a interface
 - funcionarios/membros;
 - equipes/departamentos;
 - projetos;
-- tela Kanban;
-- dashboard;
+- evolucao da tela Kanban;
+- evolucao do dashboard;
 - comentarios;
 - anexos;
 - historico de atividades;
@@ -105,7 +105,15 @@ src/main/java/com/taskmanager/api
 - `infrastructure`: configuracoes, persistencia JPA, adapter e mapper.
 - `presentation`: controllers, DTOs e tratamento de excecoes HTTP.
 
-Ainda existem pontos em evolucao, como uso de anotacoes Spring em classes de application e uso de `Page`/`Pageable` na porta de repository.
+O projeto foi mantido como monolito modular para evitar complexidade prematura, mas a divisao por camadas deixa claro o caminho de evolucao. A camada `application` usa `PageQuery` e `PageResult` proprios, sem expor `Page`/`Pageable` do Spring Data. Esses tipos de framework ficam isolados no adapter de infraestrutura (`TaskRepositoryAdapter`).
+
+Ainda existem pontos em evolucao, como uso de anotacoes Spring (`@Service`/`@Transactional`) em classes de application. Essa foi uma decisao pragmatica para aproveitar injecao de dependencia e transacoes declarativas do Spring Boot sem criar configuracao manual excessiva nesta entrega.
+
+## Dados de demonstracao
+
+Para a apresentacao, o profile `dev` carrega dados ficticios de uma empresa chamada **Atlas Solucoes Empresariais**. Esses dados sao criados pelo `DevDataLoader.java` e simulam setores, responsaveis, projetos, tarefas, prazos, prioridades, status e indicadores para que o professor veja o frontend como se ele estivesse em uso por uma empresa real.
+
+Os dados demo nao representam clientes reais. Em producao, as tarefas seriam cadastradas pelos usuarios da empresa contratante. A explicacao completa esta em [Dados de demonstracao](docs/dados-demo.md).
 
 ## Tecnologias
 
@@ -244,13 +252,13 @@ Estado real:
 
 | Criterio | Status atual |
 |---|---|
-| Clean Code | Parcialmente atendido, com boa separacao de responsabilidades e nomes claros |
-| SOLID | Parcialmente atendido, com use cases e porta de repository |
+| Clean Code | Atendido com boa separacao de responsabilidades; dominio simples e evolucao futura documentada |
+| SOLID | Atendido com justificativa: SRP, DIP, ISP e DI demonstrados em use cases, porta e adapters |
 | Design Patterns | Atendido com Repository, Adapter, Mapper, Factory, Facade/Service, DTO, DI e Exception Handler |
-| TDD | Parcialmente atendido por testes unitarios existentes |
+| TDD | Atendido com justificativa: 55 testes automatizados e ciclos de teste/refatoracao documentados |
 | BDD | Atendido no fluxo basico de tarefas com Cucumber |
-| Arquitetura Limpa | Parcialmente atendida pela estrutura em camadas |
-| Microsservicos | Proposta arquitetural documentada; nao ha servicos separados executaveis |
+| Arquitetura Limpa | Atendida com justificativa: monolito modular em camadas, ports/adapters e limite pragmatico do Spring |
+| Microsservicos | Atendido como modelagem arquitetural; nao ha servicos separados executaveis nesta versao |
 | Docker | Atendido com Dockerfile, Compose, PostgreSQL e volume persistente |
 | Deploy | Pendente; sera feito na fase final |
 | Justificativas tecnicas | Documentadas em `docs/` |
@@ -258,6 +266,7 @@ Estado real:
 ## Documentacao principal
 
 - [Proposta](docs/proposta.md)
+- [Proposta detalhada do sistema](docs/proposta-sistema-gestao-demandas.md)
 - [Requisitos](docs/requisitos.md)
 - [Arquitetura](docs/arquitetura.md)
 - [Clean Code](docs/clean-code.md)
@@ -266,6 +275,7 @@ Estado real:
 - [TDD](docs/tdd.md)
 - [BDD](docs/bdd.md)
 - [Microsservicos](docs/microsservicos.md)
+- [Dados de demonstracao](docs/dados-demo.md)
 - [Docker](docs/docker.md)
 - [Deploy](docs/deploy.md)
 - [Justificativas tecnicas](docs/justificativas-tecnicas.md)

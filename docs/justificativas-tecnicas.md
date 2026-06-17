@@ -40,6 +40,14 @@ A separacao entre `domain`, `application`, `infrastructure` e `presentation` fac
 
 O frontend estatico foi escolhido para entregar uma interface simples e direta sem aumentar a complexidade com framework SPA. Isso e adequado para o momento atual, mas pode evoluir para React, Vue ou outro framework caso o produto cresca.
 
+## Dados ficticios de demonstracao
+
+O projeto usa dados ficticios no profile `dev` para tornar a apresentacao mais realista. A empresa **Atlas Solucoes Empresariais**, os responsaveis, projetos, tarefas, prazos e indicadores sao mockados/semeados pelo `DevDataLoader.java`.
+
+Essa escolha evita apresentar uma tela vazia ou tarefas genericas sem contexto. O frontend continua consumindo a API real; apenas a massa inicial de dados e controlada para demonstracao academica. Em producao, esses dados nao representam clientes reais e seriam substituidos por informacoes cadastradas pelos usuarios da empresa contratante.
+
+Detalhes completos estao em `docs/dados-demo.md`.
+
 ## Limitacoes assumidas
 
 - sem autenticacao por enquanto;

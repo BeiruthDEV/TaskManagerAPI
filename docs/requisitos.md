@@ -13,6 +13,8 @@ O MVP atual cobre o modulo de tarefas:
 - consultar tarefas agrupadas por status para Kanban real via API;
 - consultar indicadores basicos de dashboard via API;
 - visualizar tarefas em tabela no frontend;
+- visualizar Kanban no frontend;
+- visualizar dashboard no frontend;
 - buscar tarefas localmente no frontend;
 - exibir resumo por status;
 - exibir roadmap de modulos futuros.
@@ -79,10 +81,8 @@ Ainda nao estao implementados:
 - autenticacao;
 - multiempresa;
 - projetos reais;
-- tela Kanban funcional no frontend;
-- tela dashboard funcional no frontend;
 - comentarios;
 - anexos;
 - deploy publico.
 
-Observacao: Kanban e dashboard ja existem como endpoints de API. Ainda nao ha telas funcionais de Kanban e dashboard no frontend.
+Observacao: Kanban e dashboard existem como endpoints de API e possuem telas no frontend. O limite atual e que esses recursos ainda fazem parte do modulo de tarefas, sem projetos, equipes, usuarios e organizacoes como modulos cadastrais completos.
