@@ -1,12 +1,12 @@
 package com.taskmanager.api.application.usecase;
 
+import com.taskmanager.api.application.pagination.PageQuery;
+import com.taskmanager.api.application.pagination.PageResult;
 import com.taskmanager.api.application.port.TaskRepository;
 import com.taskmanager.api.domain.model.Task;
 import com.taskmanager.api.domain.model.TaskPriority;
 import com.taskmanager.api.domain.model.TaskStatus;
 import java.util.List;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,8 +20,8 @@ public class ListTasksUseCase {
     }
 
     @Transactional(readOnly = true)
-    public Page<Task> list(Pageable pageable) {
-        return taskRepository.findAll(pageable);
+    public PageResult<Task> list(PageQuery query) {
+        return taskRepository.findAll(query);
     }
 
     @Transactional(readOnly = true)

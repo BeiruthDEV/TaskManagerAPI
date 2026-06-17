@@ -9,6 +9,8 @@ import static org.mockito.Mockito.when;
 import com.taskmanager.api.application.command.CreateTaskCommand;
 import com.taskmanager.api.application.command.UpdateTaskCommand;
 import com.taskmanager.api.application.factory.TaskFactory;
+import com.taskmanager.api.application.pagination.PageQuery;
+import com.taskmanager.api.application.pagination.PageResult;
 import com.taskmanager.api.application.port.TaskRepository;
 import com.taskmanager.api.application.usecase.CreateTaskUseCase;
 import com.taskmanager.api.application.usecase.DeleteTaskUseCase;
@@ -30,10 +32,6 @@ import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -147,15 +145,16 @@ class TaskServiceTest {
     }
 
     @Test
-    void shouldListTasksWhenPageableIsProvided() {
-        Pageable pageable = PageRequest.of(0, 10);
+    void shouldListTasksWhenPageQueryIsProvided() {
+        PageQuery query = PageQuery.of(0, 10);
         Task task = new Task("Listar", null, null, null, null, null, null, null);
-        Page<Task> expectedPage = new PageImpl<>(List.of(task), pageable, 1);
-        when(taskRepository.findAll(pageable)).thenReturn(expectedPage);
+        PageResult<Task> expected = PageResult.of(List.of(task), query, 1);
+        when(taskRepository.findAll(query)).thenReturn(expected);
 
-        Page<Task> result = taskService.findAll(pageable);
+        PageResult<Task> result = taskService.findAll(query);
 
-        assertThat(result.getContent()).containsExactly(task);
+        assertThat(result.content()).containsExactly(task);
+        assertThat(result.totalElements()).isEqualTo(1);
     }
 
     @Test

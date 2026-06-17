@@ -2,6 +2,8 @@ package com.taskmanager.api.application;
 
 import com.taskmanager.api.application.command.CreateTaskCommand;
 import com.taskmanager.api.application.command.UpdateTaskCommand;
+import com.taskmanager.api.application.pagination.PageQuery;
+import com.taskmanager.api.application.pagination.PageResult;
 import com.taskmanager.api.application.usecase.CreateTaskUseCase;
 import com.taskmanager.api.application.usecase.DeleteTaskUseCase;
 import com.taskmanager.api.application.usecase.FindTaskUseCase;
@@ -15,8 +17,6 @@ import com.taskmanager.api.domain.model.Task;
 import com.taskmanager.api.domain.model.TaskPriority;
 import com.taskmanager.api.domain.model.TaskStatus;
 import java.util.List;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -48,8 +48,8 @@ public class TaskService {
         this.taskDashboardUseCase = taskDashboardUseCase;
     }
 
-    public Page<Task> findAll(Pageable pageable) {
-        return listTasksUseCase.list(pageable);
+    public PageResult<Task> findAll(PageQuery query) {
+        return listTasksUseCase.list(query);
     }
 
     public Task findById(Long id) {

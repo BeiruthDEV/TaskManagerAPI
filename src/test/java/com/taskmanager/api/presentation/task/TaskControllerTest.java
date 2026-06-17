@@ -21,6 +21,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.taskmanager.api.application.TaskService;
 import com.taskmanager.api.application.command.CreateTaskCommand;
 import com.taskmanager.api.application.command.UpdateTaskCommand;
+import com.taskmanager.api.application.pagination.PageQuery;
+import com.taskmanager.api.application.pagination.PageResult;
 import com.taskmanager.api.application.usecase.KanbanColumn;
 import com.taskmanager.api.application.usecase.TaskDashboard;
 import com.taskmanager.api.domain.exception.TaskNotFoundException;
@@ -39,10 +41,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -156,9 +154,9 @@ class TaskControllerTest {
     void shouldListTasksWithPagination() throws Exception {
         Task task1 = buildTask(1L, "Tarefa 1", TaskStatus.PENDENTE, TaskPriority.ALTA);
         Task task2 = buildTask(2L, "Tarefa 2", TaskStatus.EM_PROGRESSO, TaskPriority.MEDIA);
-        Pageable pageable = PageRequest.of(0, 10);
-        Page<Task> page = new PageImpl<>(List.of(task1, task2), pageable, 2);
-        given(taskService.findAll(any(Pageable.class))).willReturn(page);
+        PageQuery query = PageQuery.of(0, 10);
+        PageResult<Task> page = PageResult.of(List.of(task1, task2), query, 2);
+        given(taskService.findAll(any(PageQuery.class))).willReturn(page);
 
         mockMvc.perform(get("/api/tasks"))
                 .andExpect(status().isOk())
@@ -167,14 +165,16 @@ class TaskControllerTest {
                 .andExpect(jsonPath("$.content[1].id").value(2))
                 .andExpect(jsonPath("$.totalElements").value(2))
                 .andExpect(jsonPath("$.size").value(10))
-                .andExpect(jsonPath("$.number").value(0));
+                .andExpect(jsonPath("$.number").value(0))
+                .andExpect(jsonPath("$.first").value(true))
+                .andExpect(jsonPath("$.last").value(true));
     }
 
     @Test
     void shouldHonorCustomPageAndSizeParameters() throws Exception {
-        Pageable pageable = PageRequest.of(1, 5);
-        Page<Task> page = new PageImpl<>(List.of(), pageable, 0);
-        given(taskService.findAll(any(Pageable.class))).willReturn(page);
+        PageQuery query = PageQuery.of(1, 5);
+        PageResult<Task> page = PageResult.of(List.of(), query, 0);
+        given(taskService.findAll(any(PageQuery.class))).willReturn(page);
 
         mockMvc.perform(get("/api/tasks")
                         .param("page", "1")

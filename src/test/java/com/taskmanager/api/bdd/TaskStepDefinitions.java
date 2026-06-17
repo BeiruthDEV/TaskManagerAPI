@@ -7,6 +7,8 @@ import com.taskmanager.api.application.TaskService;
 import com.taskmanager.api.application.command.CreateTaskCommand;
 import com.taskmanager.api.application.command.UpdateTaskCommand;
 import com.taskmanager.api.application.factory.TaskFactory;
+import com.taskmanager.api.application.pagination.PageQuery;
+import com.taskmanager.api.application.pagination.PageResult;
 import com.taskmanager.api.application.port.TaskRepository;
 import com.taskmanager.api.application.usecase.CreateTaskUseCase;
 import com.taskmanager.api.application.usecase.DeleteTaskUseCase;
@@ -29,9 +31,6 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.Pageable;
 
 public class TaskStepDefinitions {
 
@@ -181,11 +180,11 @@ public class TaskStepDefinitions {
         private long sequence = 1L;
 
         @Override
-        public Page<Task> findAll(Pageable pageable) {
+        public PageResult<Task> findAll(PageQuery query) {
             List<Task> allTasks = findAll();
-            int start = (int) Math.min(pageable.getOffset(), allTasks.size());
-            int end = Math.min(start + pageable.getPageSize(), allTasks.size());
-            return new PageImpl<>(allTasks.subList(start, end), pageable, allTasks.size());
+            int start = (int) Math.min(query.offset(), allTasks.size());
+            int end = Math.min(start + query.size(), allTasks.size());
+            return PageResult.of(allTasks.subList(start, end), query, allTasks.size());
         }
 
         @Override

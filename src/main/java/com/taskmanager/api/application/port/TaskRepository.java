@@ -1,16 +1,16 @@
 package com.taskmanager.api.application.port;
 
+import com.taskmanager.api.application.pagination.PageQuery;
+import com.taskmanager.api.application.pagination.PageResult;
 import com.taskmanager.api.domain.model.Task;
 import com.taskmanager.api.domain.model.TaskPriority;
 import com.taskmanager.api.domain.model.TaskStatus;
 import java.util.List;
 import java.util.Optional;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 
 public interface TaskRepository {
 
-    Page<Task> findAll(Pageable pageable);
+    PageResult<Task> findAll(PageQuery query);
 
     List<Task> findAll();
 

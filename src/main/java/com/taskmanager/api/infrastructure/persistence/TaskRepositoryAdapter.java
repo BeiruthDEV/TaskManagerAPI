@@ -1,5 +1,7 @@
 package com.taskmanager.api.infrastructure.persistence;
 
+import com.taskmanager.api.application.pagination.PageQuery;
+import com.taskmanager.api.application.pagination.PageResult;
 import com.taskmanager.api.application.port.TaskRepository;
 import com.taskmanager.api.domain.model.Task;
 import com.taskmanager.api.domain.model.TaskPriority;
@@ -7,7 +9,7 @@ import com.taskmanager.api.domain.model.TaskStatus;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Repository;
 
 @Repository
@@ -20,8 +22,11 @@ public class TaskRepositoryAdapter implements TaskRepository {
     }
 
     @Override
-    public Page<Task> findAll(Pageable pageable) {
-        return springDataTaskRepository.findAll(pageable).map(TaskJpaMapper::toDomain);
+    public PageResult<Task> findAll(PageQuery query) {
+        Page<Task> page = springDataTaskRepository
+                .findAll(PageRequest.of(query.page(), query.size()))
+                .map(TaskJpaMapper::toDomain);
+        return PageResult.of(page.getContent(), query, page.getTotalElements());
     }
 
     @Override
