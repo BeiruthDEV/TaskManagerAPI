@@ -1,4 +1,6 @@
-# Trackio - TaskManagerAPI
+# Trackio - TaskManagerAPI 
+
+![CI](https://github.com/BeiruthDEV/TaskManagerAPI/actions/workflows/ci.yml/badge.svg)
 
 Trackio e um sistema em evolucao para gestao empresarial de demandas, tarefas, responsaveis, prazos e produtividade. O repositorio atual contem uma API REST em Java/Spring Boot, uma interface web estatica para o modulo de tarefas e documentacao academica para demonstrar Clean Code, SOLID, Design Patterns, TDD, BDD, Arquitetura Limpa, Docker, microsservicos planejados e deploy.
 
